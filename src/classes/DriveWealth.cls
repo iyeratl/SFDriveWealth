@@ -48,13 +48,20 @@ public with sharing class DriveWealth {
                     }
             );
 
-               //Get record based on AccountID from DW_Session__c
+
+            Util.log('DriveWealth.retrieveDriveWealthSessionInfo():AccountID: ' + AccountID);
+            Util.log('DriveWealth.retrieveDriveWealthSessionInfo():DWUserID: ' + DWUserID);
+
+            //Get record based on AccountID from DW_Session__c
             List<DW_Session__C> DWSession = [
                     select ID, Name, DW_Session_Key__c, DW_User_ID__c, Account_ID__c, Active__c
                     from DW_Session__c
                     where Account_ID__c = :AccountID and DW_User_ID__c=:DWUserID
                     limit 1
             ];
+
+
+            Util.log('DriveWealth.retrieveDriveWealthSessionInfo():DWSession: ' + DWSession);
 
             if (DWSession.size() > 0) {
                 dws = DWSession[0];
@@ -63,16 +70,14 @@ public with sharing class DriveWealth {
                 dws.Active__c = false;
                 dws.Name = '';
                 dws.DW_User_ID__c = '';
-                dws.Account_ID__c = '';
+                dws.Account_ID__c = null;
                 dws.DW_Session_Key__c = '';
                 dws.ID = null;
 
             }
         }catch (SFDCAccessControlException e) {
-            String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: '
-                    + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: '
-                    + e.getExceptionField() + ' Text: ' + e.getText();
-            Util.log('DriveWealth.retrieveDriveWealthSessionInfo():Exception: ' + message);
+            String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: ' + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: ' + e.getExceptionField() + ' Text: ' + e.getText();
+            Util.log('DriveWealth.retrieveDriveWealthSessionInfo():SFDCAccessControlException: ' + message);
         }catch(Exception e){ Util.log('DriveWealth.retrieveDriveWealthSessionInfo():Exception: ' + e.getMessage()); }
         return dws;
     }
@@ -120,10 +125,8 @@ public with sharing class DriveWealth {
             Util.log('DriveWealth.setDWSessionInfo():Upsert: ' + dws) ;
 
         }catch (SFDCAccessControlException e) {
-            String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: '
-                    + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: '
-                    + e.getExceptionField() + ' Text: ' + e.getText();
-            Util.log('DriveWealth.setDWSessionInfo():Exception: ' + message);
+            String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: ' + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: ' + e.getExceptionField() + ' Text: ' + e.getText();
+            Util.log('DriveWealth.setDWSessionInfo():SFDCAccessControlException: ' + message);
         }catch(Exception e){ Util.log('DriveWealth.setDWSessionInfo():Exception: ' + e.getMessage()); }
     }
 
@@ -149,9 +152,8 @@ public with sharing class DriveWealth {
             //If Session is not valid then let's do new login
             //retValue.code might be 500 (wrong session format) or 401 (not valid); if NOT null then let's do login
             if (retValue == null || retValue.code != null) {
-
                 retValue = DriveWealthAPI.createSession(DriveWealthAPI.getEndpointCreateSession(), username, password);
-                Util.log('DriveWealth:login():createSession():retValue: ' + retValue);
+                Util.log('DriveWealth:login():retValue: ' + retValue);
             }
         }catch(Exception e){ Util.log('DriveWealth.login(username, password):Exception: ' + e.getMessage()); }
         return retValue;
@@ -182,11 +184,9 @@ public with sharing class DriveWealth {
             }
         }
         catch (SFDCAccessControlException e) {
-            String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: '
-                    + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: '
-                    + e.getExceptionField() + ' Text: ' + e.getText();
-            Util.log('DriveWealth.retrieveDriveWealthSessionInfo():Exception: ' + message);
-        }catch(Exception e){ Util.log('DriveWealth.login(username, password):Exception: ' + e.getMessage()); }
+            String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: ' + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: ' + e.getExceptionField() + ' Text: ' + e.getText();
+            Util.log('DriveWealth.retrieveAccountInfo():Exception: ' + message);
+        }catch(Exception e){ Util.log('DriveWealth.retrieveAccountInfo():Exception: ' + e.getMessage()); }
     }
     /**
      * This is used to prepare information for login. We need Account ID as we need to get DriveWealth username/password and other information
@@ -210,7 +210,7 @@ public with sharing class DriveWealth {
      */
     public static DriveWealthJsonSession doSetup(String AccountID, String Username, String Password){
         try {
-            Util.log('DriveWealth:init():retrieveAccountInfo:AccountID: ' + AccountID);
+            Util.log('DriveWealth:init():doSetup:AccountID: ' + AccountID);
             retrieveAccountInfo(AccountID);
 
             if(acc != null) {
@@ -241,12 +241,12 @@ public with sharing class DriveWealth {
         try {
             if(dws != null && acc != null) {
                 //Update DW Session to newest
-                Util.log('DriveWealth:init():setDWSessionInfo:FutureHandler:acc ' + acc);
-                Util.log('DriveWealth:init():setDWSessionInfo:FutureHandler:dws ' + dws);
-                Util.log('DriveWealth:init():setDWSessionInfo:FutureHandler:sessionInfo ' + sessionInfo);
+                Util.log('DriveWealth:doCleanup():setDWSessionInfo:acc ' + acc);
+                Util.log('DriveWealth:doCleanup():setDWSessionInfo:dws ' + dws);
+                Util.log('DriveWealth:doCleanup():setDWSessionInfo:sessionInfo ' + sessionInfo);
                 setDWSessionInfo(acc.Id, dws.ID, sessionInfo.userID, sessionInfo.sessionKey);
             }
-        }catch(Exception e){ Util.log('DriveWealth.login(AccountID):Exception: ' + e.getMessage()); }
+        }catch(Exception e){ Util.log('DriveWealth.doCleanup():Exception: ' + e.getMessage()); }
     }
 
 
@@ -256,6 +256,9 @@ public with sharing class DriveWealth {
      * Ensure that init() is called before this to make sure there is valid session
      *
      * <pre>
+     *     //For debugging
+     *     Util.debug = true;
+     *
      *     //Need to login to DriveWealth
      *     DriveWealth.doSetup('00141000007RP8r');
      *     List<DriveWealthJsonInstrument> inInfo = DriveWealth.searchInstrument('CRM,AAPL');

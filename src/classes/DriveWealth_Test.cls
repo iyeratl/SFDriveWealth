@@ -14,10 +14,62 @@ private class DriveWealth_Test {
             acc.DW_Username__c = 'abc1234';
             acc.DW_Password__c = 'abc1234';
 
+            //This ID matches the data from HTTPMockResponse in createSession()
+            acc.DW_User_ID__c = '02e57c7d-d071-4c63-b491-1194a9939ea5';
+
             listAcc.add(acc);
         }
 
         insert listAcc;
+
+    }
+
+    /**
+     * Shoudl return proper code because,w ith invalid session, it should do login again
+     */
+    @isTest
+    private static void login_withActiveSessionButWrongKeyName_pass() {
+        Account acc = [SELECT Id, DW_Username__c, DW_Password__C from Account where name='Account A0' limit 1];
+
+
+        DW_Session__c dws = new DW_Session__c();
+
+        dws.Active__c = true;
+        dws.Name = userInfo.getUserId();
+        //Need to use sessionKey to generate proper session URL so using wrong one here
+        //This will ensure that login is triggered
+        dws.DW_Session_Key__c = 'sessionKeyINVALID';
+        dws.DW_User_ID__c = '02e57c7d-d071-4c63-b491-1194a9939ea5';
+        dws.Account_ID__c = acc.Id;
+        insert dws;
+
+
+        Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
+
+        Test.startTest();
+        DriveWealthJsonSession res = DriveWealth.doSetup(acc.Id);
+        DriveWealth.doCleanup();
+        Test.stopTest();
+
+
+        System.assertEquals(null, res.code);
+        System.assertEquals(2000, res.appTypeID);
+
+    }
+
+    @isTest
+    private static void searchInstrument_positive(){
+        Account acc = [SELECT Id, DW_Username__c, DW_Password__C from Account where name='Account A0' limit 1];
+
+        Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
+
+        Test.startTest();
+        DriveWealth.doSetup(acc.Id);
+        List<DriveWealthJsonInstrument> res = DriveWealth.searchInstrument('crm');
+        DriveWealth.doCleanup();
+        Test.stopTest();
+
+        System.assertEquals('a67422af-8504-43df-9e63-7361eb0bd99e', res[0].instrumentID);
     }
 
     @istest
@@ -47,95 +99,22 @@ private class DriveWealth_Test {
         System.assertEquals(true, DriveWealth.dws.Active__c);
 
     }
-    @istest
-    private static void doSetup_existing(){
-        Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
-
-        Account acc = [SELECT Id, DW_Username__c, DW_Password__C from Account where name='Account A0' limit 1];
-
-        Test.startTest();
-        DriveWealth.doSetup(acc.Id);
-        DriveWealth.doCleanup();
-        //Test for preexisting setup
-        DriveWealth.doSetup(acc.Id);
-        Test.stopTest();
-
-        System.assertEquals(true, DriveWealth.dws.Active__c);
-
-    }
-    /*
     @isTest
     private static void login_positive(){
         Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
 
+        Account acc = [SELECT Id, DW_Username__c, DW_Password__C from Account where name='Account A0' limit 1];
+
+
         Test.startTest();
-        DriveWealthJsonSession res = DriveWealth.login();
+        DriveWealthJsonSession res = DriveWealth.doSetup(acc.Id);
+        DriveWealth.doCleanup();
         Test.stopTest();
 
         System.assertEquals(2000, res.appTypeID);
 
-        List<DriveWealthSession__c> dwsList = [select Id, Active__c from DriveWealthSession__c];
+        List<DW_Session__c> dwsList = [select Id, Active__c from DW_Session__c];
         System.assertEquals(1, dwsList.size());
-    }
-
-    @isTest
-    private static void login_withActiveSession_positive(){
-        DriveWealthSession__c dws = new DriveWealthSession__c();
-
-        dws.Active__c = true;
-        dws.Name = userInfo.getUserId();
-        dws.SFSessionId__c = UserInfo.getSessionId();
-        dws.DWSessionKey__c = 'sessionKey'; //Need to use sessionKey to generate proper session URL
-        insert dws;
-
-        Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
-
-        Test.startTest();
-        DriveWealthJsonSession res = DriveWealth.login();
-        Test.stopTest();
-
-        System.assertEquals(2000, res.appTypeID);
-
-        String sessionKey = '02e57c7d-d071-4c63-b491-1194a9939ea5.2016-01-20T20:50:48.680Z';
-        List<DriveWealthSession__c> dwsList = [select Id, DWSessionKey__c from DriveWealthSession__c];
-        System.assertEquals(sessionKey, dwsList[0].DWSessionKey__c);
-
-    }
-    @isTest
-    private static void login_withActiveSessionButWrongKeyName_positive(){
-        DriveWealthSession__c dws = new DriveWealthSession__c();
-
-        dws.Active__c = true;
-        dws.Name = userInfo.getUserId();
-        dws.SFSessionId__c = UserInfo.getSessionId();
-        //Need to use sessionKey to generate proper session URL so using wrong one here
-        //This will ensure that login is triggered
-        dws.DWSessionKey__c = 'sessionKeyINVALID';
-        insert dws;
-
-        Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
-
-        Test.startTest();
-        DriveWealthJsonSession res = DriveWealth.login();
-        Test.stopTest();
-
-        System.assertEquals(2000, res.appTypeID);
-
-        String sessionKey = '02e57c7d-d071-4c63-b491-1194a9939ea5.2016-01-20T20:50:48.680Z';
-        List<DriveWealthSession__c> dwsList = [select Id, DWSessionKey__c from DriveWealthSession__c];
-        System.assertEquals(sessionKey, dwsList[0].DWSessionKey__c);
-
-    }
-
-    @isTest
-    private static void searchInstrument_positive(){
-        Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
-
-        Test.startTest();
-        List<DriveWealthJsonInstrument> res = DriveWealth.searchInstrument('crm');
-        Test.stopTest();
-
-        System.assertEquals('a67422af-8504-43df-9e63-7361eb0bd99e', res[0].instrumentID);
     }
     @isTest
     private static void searchInstrument_negative(){
