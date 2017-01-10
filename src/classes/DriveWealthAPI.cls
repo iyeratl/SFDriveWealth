@@ -208,12 +208,14 @@ global with sharing class DriveWealthAPI {
      *
      * @return List<DriveWealthJsonInstrument>
     */
-    Public Static DriveWealthJsonAccount createPracticeAccount(String endpoint, Map<String, String> data) {
+    Public Static DriveWealthJsonAccount createPracticeAccount(String endpoint, Map<String, String> data, String sessionKey) {
         HTTPUtilities hu = new HTTPUtilities();
         hu.setEndpoint(endpoint);
         hu.setMethod('POST');
         hu.setHeader('Content-Type', contentType);
-        //hu.setHeader('x-mysolomeo-session-key', sessionKey);
+        if(sessionKey != null) {
+            hu.setHeader('x-mysolomeo-session-key', sessionKey);
+        }
         hu.setBody(JSON.serialize(data));
 
         HTTPResponse res = hu.sendRequest() ;

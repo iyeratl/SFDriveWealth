@@ -3,6 +3,16 @@
     <customSettingsType>Hierarchy</customSettingsType>
     <enableFeeds>false</enableFeeds>
     <fields>
+        <fullName>Referral_Code__c</fullName>
+        <externalId>false</externalId>
+        <label>Referral Code</label>
+        <length>15</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>endpoint__c</fullName>
         <externalId>false</externalId>
         <label>Endpoint</label>

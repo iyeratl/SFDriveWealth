@@ -9,6 +9,7 @@ public class DriveWealthJsonAccount_Test {
         String json = '{'+
                 '    \"password\": \"abcd1234\",'+
                 '    \"userID\": \"02e57c7d-d071-4c63-b491-1194a9939ea5\",'+
+                '    \"accountID\": \"02e57c7d-d071-4c63-b491-1194a9939ea5\",'+
                 '    \"username\": \"bob227\"'+
                 '}';
         DriveWealthJsonAccount obj = DriveWealthJsonAccount.parse(json);

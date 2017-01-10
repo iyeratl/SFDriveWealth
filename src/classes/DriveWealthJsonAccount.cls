@@ -6,6 +6,7 @@ public class DriveWealthJsonAccount {
 
     public String password;
     public String userID;
+    public String accountID;
     public String username;
     public Integer code;      //401
     public String message;      //"Invalid x-mysolomeo-session-key HTTP header [ipAddress=1.1.1.1]"

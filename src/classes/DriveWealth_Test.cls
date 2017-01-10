@@ -40,7 +40,7 @@ private class DriveWealth_Test {
         //This will ensure that login is triggered
         dws.DW_Session_Key__c = 'sessionKeyINVALID';
         dws.DW_User_ID__c = '02e57c7d-d071-4c63-b491-1194a9939ea5';
-        dws.Account_ID__c = acc.Id;
+        dws.Account__c = acc.Id;
         insert dws;
 
 

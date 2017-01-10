@@ -42,7 +42,7 @@ public with sharing class DriveWealth {
             Boolean hasAccountViewPermission = Util.AccessController.isAuthorizedToView(
                     Schema.DW_Session__C.getSobjectType(),
                     new List<Schema.SobjectField>{
-                            Schema.DW_Session__C.fields.Name, Schema.DW_Session__C.fields.Account_ID__c,
+                            Schema.DW_Session__C.fields.Name, Schema.DW_Session__C.fields.Account__c,
                             Schema.DW_Session__C.fields.DW_Session_Key__c, Schema.DW_Session__C.fields.DW_User_ID__c,
                             Schema.DW_Session__C.fields.Active__c
                     }
@@ -54,9 +54,9 @@ public with sharing class DriveWealth {
 
             //Get record based on AccountID from DW_Session__c
             List<DW_Session__C> DWSession = [
-                    select ID, Name, DW_Session_Key__c, DW_User_ID__c, Account_ID__c, Active__c
+                    select ID, Name, DW_Session_Key__c, DW_User_ID__c, Account__c, Active__c
                     from DW_Session__c
-                    where Account_ID__c = :AccountID and DW_User_ID__c=:DWUserID
+                    where Account__c = :AccountID and DW_User_ID__c=:DWUserID
                     limit 1
             ];
 
@@ -70,7 +70,7 @@ public with sharing class DriveWealth {
                 dws.Active__c = false;
                 dws.Name = '';
                 dws.DW_User_ID__c = '';
-                dws.Account_ID__c = null;
+                dws.Account__c = null;
                 dws.DW_Session_Key__c = '';
                 dws.ID = null;
 
@@ -92,14 +92,14 @@ public with sharing class DriveWealth {
      *
      * @return Boolean
      */
-    private static void setDWSessionInfo(String AccountID, String DWID, String DWUserID, String DWSessionKey){
+    private static void saveDWSessionInfo(String AccountID, String DWID, String DWUserID, String DWSessionKey){
         try{
 
             //CRUD/FLS check
             Boolean hasAccountCreatePermission = Util.AccessController.isAuthorizedToCreate(
                     Schema.DW_Session__C.getSobjectType(),
                     new List<Schema.SobjectField>{
-                            Schema.DW_Session__C.fields.Name, Schema.DW_Session__C.fields.Account_ID__c,
+                            Schema.DW_Session__C.fields.Name, Schema.DW_Session__C.fields.Account__c,
                             Schema.DW_Session__C.fields.DW_Session_Key__c, Schema.DW_Session__C.fields.DW_User_ID__c,
                             Schema.DW_Session__C.fields.Active__c
                     }
@@ -107,7 +107,7 @@ public with sharing class DriveWealth {
             Boolean hasAccountUpdatePermission = Util.AccessController.isAuthorizedToUpdate(
                     Schema.DW_Session__C.getSobjectType(),
                     new List<Schema.SobjectField>{
-                            Schema.DW_Session__C.fields.Name, Schema.DW_Session__C.fields.Account_ID__c,
+                            Schema.DW_Session__C.fields.Name, Schema.DW_Session__C.fields.Account__c,
                             Schema.DW_Session__C.fields.DW_Session_Key__c, Schema.DW_Session__C.fields.DW_User_ID__c,
                             Schema.DW_Session__C.fields.Active__c
                     }
@@ -118,7 +118,7 @@ public with sharing class DriveWealth {
             dws.Name = 'Account:' + AccountID;
             dws.Active__c = true;
             dws.DW_Session_Key__c = DWSessionKey;
-            dws.Account_ID__c = AccountID;
+            dws.Account__c = AccountID;
             dws.DW_User_ID__c = DWUserID;
             upsert dws DW_User_ID__c;
 
@@ -153,6 +153,10 @@ public with sharing class DriveWealth {
             //retValue.code might be 500 (wrong session format) or 401 (not valid); if NOT null then let's do login
             if (retValue == null || retValue.code != null) {
                 retValue = DriveWealthAPI.createSession(DriveWealthAPI.getEndpointCreateSession(), username, password);
+
+                //Save session info variable as we will be using it before it's saved (at the end)
+                dws.DW_Session_Key__c = retValue.sessionKey;
+
                 Util.log('DriveWealth:login():retValue: ' + retValue);
             }
         }catch(Exception e){ Util.log('DriveWealth.login(username, password):Exception: ' + e.getMessage()); }
@@ -171,10 +175,10 @@ public with sharing class DriveWealth {
             if(acc == null){
                 //CRUD/FLS check
                 Boolean hasAccountViewPermission = Util.AccessController.isAuthorizedToView(Schema.Account.getSobjectType(),
-                    new List<Schema.SobjectField>{
-                        Schema.Account.fields.Name, Schema.Account.fields.DW_Username__c,
-                        Schema.Account.fields.DW_Password__c, Schema.Account.fields.DW_User_ID__c
-                    }
+                        new List<Schema.SobjectField>{
+                                Schema.Account.fields.Name, Schema.Account.fields.DW_Username__c,
+                                Schema.Account.fields.DW_Password__c, Schema.Account.fields.DW_User_ID__c
+                        }
                 );
 
                 List<Account> listAccounts = [select id, DW_Username__c, DW_Password__c, DW_User_ID__c FROM account where ID=:AccountID limit 1];
@@ -199,7 +203,7 @@ public with sharing class DriveWealth {
      * @return DriveWealthJsonSession
      */
     public static DriveWealthJsonSession doSetup(String AccountID){
-        return doSetup(AccountID, null, null);
+        return doSetup(AccountID, dw.Username__c, dw.Password__c);
     }
     /**
      * Same as doSetup but this one takes explicit username/password in case we need to supply it directly and not from Account
@@ -241,10 +245,10 @@ public with sharing class DriveWealth {
         try {
             if(dws != null && acc != null) {
                 //Update DW Session to newest
-                Util.log('DriveWealth:doCleanup():setDWSessionInfo:acc ' + acc);
-                Util.log('DriveWealth:doCleanup():setDWSessionInfo:dws ' + dws);
-                Util.log('DriveWealth:doCleanup():setDWSessionInfo:sessionInfo ' + sessionInfo);
-                setDWSessionInfo(acc.Id, dws.ID, sessionInfo.userID, sessionInfo.sessionKey);
+                Util.log('DriveWealth:doCleanup():acc ' + acc);
+                Util.log('DriveWealth:doCleanup():dws ' + dws);
+                Util.log('DriveWealth:doCleanup():sessionInfo ' + sessionInfo);
+                saveDWSessionInfo(acc.Id, dws.ID, sessionInfo.userID, sessionInfo.sessionKey);
             }
         }catch(Exception e){ Util.log('DriveWealth.doCleanup():Exception: ' + e.getMessage()); }
     }
@@ -256,14 +260,14 @@ public with sharing class DriveWealth {
      * Ensure that init() is called before this to make sure there is valid session
      *
      * <pre>
-     *     //For debugging
-     *     Util.debug = true;
-     *
-     *     //Need to login to DriveWealth
-     *     DriveWealth.doSetup('00141000007RP8r');
-     *     List<DriveWealthJsonInstrument> inInfo = DriveWealth.searchInstrument('CRM,AAPL');
-     *     //Update new session Info from DriveWealth
-     *     DriveWealth.doCleanup();
+            Util.debug = true;
+            //Need to login to DriveWealth
+            //User "generic" username/password from Custom Settings
+            DriveWealth.doSetup('00141000007RP8r');
+
+            List<DriveWealthJsonInstrument> inInfo = DriveWealth.searchInstrument('CRM,AAPL');
+            //Update new session Info from DriveWealth
+            DriveWealth.doCleanup();
      * </pre>
      *
      * @param symbol One or more (comma separated) symbols; CRM OR CRM,AAPL
@@ -286,56 +290,94 @@ public with sharing class DriveWealth {
      * Ensure that init() is called before this to make sure there is valid session
      *
      * <pre>
-     *     //Set this if you need to see debug statements
-     *     //Util.debug = true;
-     *
-     *     //If there is no DW User ID" AND/OR "DW Account ID" associate with (standard) Account
-     *     //Then create new Practice account
-     *     //Hint: Use SOQL or initial data load to get this informaiton in, say, Lightning Component
-     *
-     *
-     *     //Custom setting to get "referralCode" needed to create account
-     *     DriveWealth__c dw = DriveWealth__c.getInstance() ;
-     *
-     *
-     *      String username = 'sfusername';
-     *      String password = 'sfpassword';
-     *
-     *     //Data for Practice Account Creation
-     *     Map<String, String> data = new Map<String, String> ();
-     *     data.put('emailAddress1', 'test@test.com');//Pull from Account
-     *     data.put('firstName', 'FirstName');//Pull from Account
-     *     data.put('lastName', 'LastName');//Pull from Account
-     *     data.put('username', username);
-     *     data.put('password', password);
-     *     data.put('referralCode', dw.Referral_Code__c);
-     *     System.debug(data);
-     *
-     *     //There is no setup because we want to use new username info for login
-     *
-     *     //Create practice account
-     *     DriveWealthJsonAccount aInfo = DriveWealth.createPracticeAccount(data);
-     *
-     *     //userID as returned after creating user
-     *     String DWUserID = aInfo.userID;
-     *
-     *     DriveWealthJsonSession sessionInfo = DriveWealth.doSetup('00141000007RP8r', username, password);
-     *     String DWAccountID = sessionInfo.Accounts[0].accountID;
-     *     System.debug(sessionInfo);
-     *     System.debug(DWAccountID);
-     *
-     *     //Do DML here to store new username, password, DW User ID and DW Account ID in Account
-     *     Account acc = [select id from account where id='00141000007RP8t'];
-     *     acc.DW_Account_ID__c = DWAccountID;
-     *     acc.DW_User_ID__c = DWUserID;
-     *     acc.DW_Username__c = username;
-     *     acc.DW_Password__c = password;
-     *     update acc;
-     *
-     *     //Update new session Info from DriveWealth
-     *     DriveWealth.doCleanup();
+            //Set this if you need to see debug statements
+            Util.debug = true;
+
+            //If there is no DW User ID" AND/OR "DW Account ID" associate with (standard) Account
+            //Then create new Practice account
+            //Hint: Use SOQL or initial data load to get this informaiton in, say, Lightning Component
+            String AccountID = '00141000007RP8w';
+            Account a = [select Id, AccountNumber, DW_Username__c, DW_Password__c, DW_Total_Practice_Accounts__c
+                            from account
+                            where id=:AccountId];
+
+            //If no DW Accounts then create one
+            if(a.DW_Total_Practice_Accounts__c <= 0 ){
+                //Custom setting to get "referralCode" needed to create account
+                DriveWealth__c dw = DriveWealth__c.getInstance() ;
+
+                String username = a.AccountNumber; //'sfusername';
+                String password = a.AccountNumber; //'sfpassword';
+
+                //Data for Practice Account Creation
+                Map<String, String> data = new Map<String, String> ();
+                data.put('emailAddress1', 'test@test.com2');//Pull from Account
+                data.put('firstName', 'FirstName 2');//Pull from Account
+                data.put('lastName', 'LastName 2');//Pull from Account
+                data.put('referralCode', dw.Referral_Code__c);
+                //If new account then provide username/password
+                data.put('username', username);
+                data.put('password', password);
+
+                System.debug(data);
+
+                //There is no setup because we want to use new username info for login
+                DriveWealthJsonAccount aInfo = DriveWealth.createPracticeAccount(data);
+
+                //Now login with new username/password to start session and get account info
+                DriveWealthJsonSession sessionInfo = DriveWealth.doSetup(a.Id, username, password);
+
+
+                //userID as returned after creating user
+                String DWUserID = aInfo.userID;
+
+                //Update account with new userID and username and password
+                a.DW_Username__c = username;
+                a.DW_Password__c = password;
+                a.DW_User_ID__c = sessionInfo.userID;
+
+                //Update account with new username, password and user I
+                update a;
+
+
+                //Go through entire list of accounts returned for that user and update the list
+                //This will return newly created account if user is new.
+                //But will also return account for old user
+                List<DW_Account__c> listAcc = new List<DW_Account__c>();
+                for(Integer i=0; i<sessionInfo.Accounts.size(); i++){
+                    DW_Account__c acc = new DW_Account__c();
+                    acc.name = sessionInfo.Accounts[i].nickname;
+                    acc.Account__c = a.Id;
+                    acc.Account_ID__c = sessionInfo.Accounts[i].accountID;
+                    acc.Account_No__c = sessionInfo.Accounts[i].accountNo;
+                    acc.Account_Type__c = sessionInfo.Accounts[i].accountType;
+                    acc.Created_When__c = sessionInfo.Accounts[i].createdWhen;
+                    acc.Opened_When__c = sessionInfo.Accounts[i].openedWhen;
+
+                    listAcc.add(acc);
+                }
+                //Upsert all accounts using Account_ID__c as External key so that it's unique
+                upsert listAcc Account_ID__c;
+                System.debug(listAcc);
+
+                //Update new session Info from DriveWealth
+                DriveWealth.doCleanup();
+
+            }else{
+
+            }
+
+
+            List<DW_Account__c> listDWAcc = [select Account_ID__c, Account__r.Id,
+                                                    Account__r.AccountNumber, Account__r.DW_User_ID__c
+                                                from DW_Account__c
+                                                where Account__r.Id=:AccountID];
+            //listDWAcc can be returned for use
+            System.debug(listDWAcc);
+
      * </pre>
      *
+     * @param UserID If this is NOT empty then append it to API call to add
      * @param data Map of data to be sent to DriveWealth for creating practice account
      *
      * @return DriveWealthJsonAccount
@@ -343,8 +385,10 @@ public with sharing class DriveWealth {
     public static DriveWealthJsonAccount createPracticeAccount(Map<String, String> data){
         DriveWealthJsonAccount retVal = new DriveWealthJsonAccount();
         try{
+            //If userID is provided then it's an existing account so we need to send session key
+            String sessionKey = (data.containsKey('userID') && data.get('userID') != null)?dws.DW_Session_Key__c:null;
 
-            retVal = DriveWealthAPI.createPracticeAccount(DriveWealthAPI.getEndpointCreatePracticeAccount(), data);
+            retVal = DriveWealthAPI.createPracticeAccount(DriveWealthAPI.getEndpointCreatePracticeAccount(), data, sessionKey) ;
 
             //retVal might be null, in that case, login() again
         }catch(Exception e){ Util.log('DriveWealth.createPracticeAccount():Exception: ' + e.getMessage());  }

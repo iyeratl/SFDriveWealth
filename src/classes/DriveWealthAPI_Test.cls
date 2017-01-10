@@ -84,8 +84,6 @@ private class DriveWealthAPI_Test {
 
         Account acc = [SELECT Id, DW_Username__c, DW_Password__C from Account where name='Account A0' limit 1];
 
-        System.debug(acc);
-
         Test.startTest();
         DriveWealthJsonSession res = DriveWealthAPI.createSession(endpoint, acc.DW_username__c, acc.DW_password__c);
         Test.stopTest();
@@ -152,7 +150,7 @@ private class DriveWealthAPI_Test {
         String endpoint = DriveWealthAPI.getEndpointSearchInstrument('crm');
 
         Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
-        DriveWealthAPI.debug = true;
+
         Test.startTest();
         List<DriveWealthJsonInstrument> res = DriveWealthAPI.searchInstrument(endpoint, 'sessionKey');
         Test.stopTest();
@@ -174,7 +172,7 @@ private class DriveWealthAPI_Test {
         String endpoint = DriveWealthAPI.getEndpointSearchInstrument('crmINVALID');
 
         Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
-        DriveWealthAPI.debug = true;
+
         Test.startTest();
         List<DriveWealthJsonInstrument> res = DriveWealthAPI.searchInstrument(endpoint, 'sessionKey');
         Test.stopTest();
@@ -196,7 +194,7 @@ private class DriveWealthAPI_Test {
         String endpoint = DriveWealthAPI.getEndpointSearchInstrument('crmEMPTY');
 
         Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
-        DriveWealthAPI.debug = true;
+
         Test.startTest();
         List<DriveWealthJsonInstrument> res = DriveWealthAPI.searchInstrument(endpoint, 'sessionKey');
         Test.stopTest();
@@ -216,10 +214,9 @@ private class DriveWealthAPI_Test {
         System.assert(dw != null);
 
         String endpoint = DriveWealthAPI.getEndpointSearchInstrument('crm,AAPL');
-        System.debug(endpoint);
 
         Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
-        DriveWealthAPI.debug = true;
+
         Test.startTest();
         List<DriveWealthJsonInstrument> res = DriveWealthAPI.searchInstrument(endpoint, 'sessionKey');
         Test.stopTest();
@@ -243,12 +240,12 @@ private class DriveWealthAPI_Test {
         String endpoint = DriveWealthAPI.getEndpointCreatePracticeAccount();
 
         Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
-        DriveWealthAPI.debug = true;
+
         Test.startTest();
         Map<String, String> data = new Map<String, String>();
         data.put('username', 'abcd1234');
         data.put('password', 'abcd1234');
-        DriveWealthJsonAccount res = DriveWealthAPI.createPracticeAccount(endpoint, 'sessionKey', data);
+        DriveWealthJsonAccount res = DriveWealthAPI.createPracticeAccount(endpoint, data, 'sessionKey');
         Test.stopTest();
 
         System.assertEquals('abcd1234', res.password);
@@ -270,12 +267,12 @@ private class DriveWealthAPI_Test {
         String endpoint = DriveWealthAPI.getEndpointCreatePracticeAccount() + '401';
 
         Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
-        DriveWealthAPI.debug = true;
+
         Test.startTest();
         Map<String, String> data = new Map<String, String>();
         data.put('username', 'abcd1234');
         data.put('password', 'abcd1234');
-        DriveWealthJsonAccount res = DriveWealthAPI.createPracticeAccount(endpoint, 'sessionKey', data);
+        DriveWealthJsonAccount res = DriveWealthAPI.createPracticeAccount(endpoint, data, 'sessionKey');
         Test.stopTest();
 
         System.assertEquals(401, res.code);
