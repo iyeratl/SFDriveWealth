@@ -27,6 +27,8 @@ private class DriveWealth_Test {
     /**
      * Shoudl return proper code because,w ith invalid session, it should do login again
      */
+
+
     @isTest
     private static void login_withActiveSessionButWrongKeyName_pass() {
         Account acc = [SELECT Id, DW_Username__c, DW_Password__C from Account where name='Account A0' limit 1];
@@ -55,21 +57,6 @@ private class DriveWealth_Test {
         System.assertEquals(null, res.code);
         System.assertEquals(2000, res.appTypeID);
 
-    }
-
-    @isTest
-    private static void searchInstrument_positive(){
-        Account acc = [SELECT Id, DW_Username__c, DW_Password__C from Account where name='Account A0' limit 1];
-
-        Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
-
-        Test.startTest();
-        DriveWealth.doSetup(acc.Id);
-        List<DriveWealthJsonInstrument> res = DriveWealth.searchInstrument('crm');
-        DriveWealth.doCleanup();
-        Test.stopTest();
-
-        System.assertEquals('a67422af-8504-43df-9e63-7361eb0bd99e', res[0].instrumentID);
     }
 
     @istest
@@ -116,6 +103,21 @@ private class DriveWealth_Test {
         List<DW_Session__c> dwsList = [select Id, Active__c from DW_Session__c];
         System.assertEquals(1, dwsList.size());
     }
+
+    @isTest
+    private static void searchInstrument_positive(){
+        Account acc = [SELECT Id, DW_Username__c, DW_Password__C from Account where name='Account A0' limit 1];
+
+        Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
+
+        Test.startTest();
+        DriveWealth.doSetup(acc.Id);
+        List<DriveWealthJsonInstrument> res = DriveWealth.searchInstrument('crm');
+        DriveWealth.doCleanup();
+        Test.stopTest();
+
+        System.assertEquals('a67422af-8504-43df-9e63-7361eb0bd99e', res[0].instrumentID);
+    }
     @isTest
     private static void searchInstrument_negative(){
         Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
@@ -135,6 +137,88 @@ private class DriveWealth_Test {
         Test.stopTest();
 
         System.assertEquals(0, res.size());
+    }
+    @isTest
+    private static void createAccount_newuser_positive(){
+        Account acc = [SELECT Id, DW_Username__c, DW_Password__C from Account where name='Account A0' limit 1];
+
+        Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
+
+        //Data for Practice Account Creation
+        Map<String, String> data = new Map<String, String> ();
+        data.put('emailAddress1', 'test@test.com2');//Pull from Account
+        data.put('firstName', 'FirstName 2');//Pull from Account
+        data.put('lastName', 'LastName 2');//Pull from Account
+        data.put('referralCode', 'Temp Code');
+        //If new account then provide username/password
+        data.put('username', 'abc1234');
+        data.put('password', 'abc1234');
+
+
+        Test.startTest();
+        DriveWealth.doSetup(acc.Id);
+        DriveWealthJsonAccount res = DriveWealth.createPracticeAccount(data);
+        DriveWealth.doCleanup();
+        Test.stopTest();
+
+        System.assertEquals('02e57c7d-d071-4c63-b491-1194a9939ea5', res.userID);
+    }
+
+
+    @isTest
+    private static void createAccount_existinguser_positive(){
+        Account acc = [SELECT Id, DW_Username__c, DW_Password__C from Account where name='Account A0' limit 1];
+
+        Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
+
+        //Data for Practice Account Creation
+        Map<String, String> data = new Map<String, String> ();
+        data.put('emailAddress1', 'test@test.com2');//Pull from Account
+        data.put('firstName', 'FirstName 2');//Pull from Account
+        data.put('lastName', 'LastName 2');//Pull from Account
+        data.put('referralCode', 'Temp Code');
+        //If existing user then provide user id
+        data.put('userID', userInfo.getUserID());
+
+
+        Test.startTest();
+        DriveWealth.doSetup(acc.Id);
+        DriveWealthJsonAccount res = DriveWealth.createPracticeAccount(data);
+        DriveWealth.doCleanup();
+        Test.stopTest();
+
+        System.assertEquals('02e57c7d-d071-4c63-b491-1194a9939ea5', res.userID);
+    }
+
+    @isTest
+    private static void createAccount_failure_401(){
+        Account acc = [SELECT Id, DW_Username__c, DW_Password__C from Account where name='Account A0' limit 1];
+
+        Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
+
+        //Data for Practice Account Creation
+        Map<String, String> data = new Map<String, String> ();
+        data.put('emailAddress1', 'test@test.com2');//Pull from Account
+        data.put('firstName', 'FirstName 2');//Pull from Account
+        data.put('lastName', 'LastName 2');//Pull from Account
+        data.put('referralCode', 'Temp Code');
+        //If new account then provide username/password
+        //If existing user then provide user id
+        //This will also add session key in request that we can use to see 401 error
+        data.put('userID', userInfo.getUserID());
+
+
+        Test.startTest();
+        DriveWealth.doSetup(acc.Id);
+
+        //This will be used in HTTPMockResponse class to send 401 response for testing
+        DriveWealth.dws.DW_Session_Key__c = 'sessKey401';
+
+        DriveWealthJsonAccount res = DriveWealth.createPracticeAccount(data);
+        DriveWealth.doCleanup();
+        Test.stopTest();
+
+        System.assertEquals(401, res.code);
     }
     /**/
 }

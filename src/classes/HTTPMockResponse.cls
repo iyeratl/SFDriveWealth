@@ -23,9 +23,16 @@ global class HTTPMockResponse implements HttpCalloutMock {
         }else if(req.getEndpoint() == 'http://api.drivewealth.io/v1/instruments?symbols=crm,AAPL' && req.getMethod() == 'GET'){
             res = searchInstrument_multiple();
         }else if(req.getEndpoint() == 'http://api.drivewealth.io/v1/signups/practice' && req.getMethod() == 'POST'){
-            res = createPracticeAccount();
-        }else if(req.getEndpoint() == 'http://api.drivewealth.io/v1/signups/practice401' && req.getMethod() == 'POST'){
-            res = createPracticeAccount401();
+            System.debug('Header:' + req.getHeader('x-mysolomeo-session-key'));
+            //Need to mimic 401
+            if(req.getHeader('x-mysolomeo-session-key') != null && req.getHeader('x-mysolomeo-session-key') == 'sessKey401'){
+                res = createPracticeAccount401();
+
+            }else{
+                res = createPracticeAccount();
+            }
+
+            //res = createPracticeAccount401();
         }
         return res;
 
