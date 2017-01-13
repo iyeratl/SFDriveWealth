@@ -43,6 +43,11 @@ global with sharing class DriveWealthAPI {
         return dw.endpoint__c + 'signups/practice';
     }
 
+    /** Endpoint for creating Market Order  */
+    public static String getEndpointCreateMarketOrder() {
+        return dw.endpoint__c + 'orders';
+    }
+
     /** Default values for some of the information required by DriveWealth API */
     public static string contentType = 'application/json';
     public static String appTypeId = '2000';
@@ -208,11 +213,12 @@ global with sharing class DriveWealthAPI {
      *
      * @return List<DriveWealthJsonInstrument>
     */
-    Public Static DriveWealthJsonAccount createPracticeAccount(String endpoint, Map<String, String> data, String sessionKey) {
+    Public Static DriveWealthJsonAccount createPracticeAccount(String endpoint, Map<String, Object> data, String sessionKey) {
         HTTPUtilities hu = new HTTPUtilities();
         hu.setEndpoint(endpoint);
         hu.setMethod('POST');
         hu.setHeader('Content-Type', contentType);
+        //Sending session is optional because we might create a new account for user or account for an existing user
         if(sessionKey != null) {
             hu.setHeader('x-mysolomeo-session-key', sessionKey);
         }
@@ -221,5 +227,38 @@ global with sharing class DriveWealthAPI {
         HTTPResponse res = hu.sendRequest() ;
 
         return DriveWealthJsonAccount.parse(res.getBody());
+    }
+
+    /**
+     * Create Market Order; http://developer.drivewealth.com/docs/add-market-order
+     *
+     * NOTE: Use try/catch when calling this code. It's upto the calling code to figure out how to deal with exceptions
+     *
+     * <pre>
+     *     //Single symbol search
+     *     DriveWealthJsonAccount inInfo1 = DriveWealthAPI.createPracticeAccount('http://api.drivewealth.io/v1/signups/practice', 'SESSION_KEY', {name: NAME....});
+     *     if(inInfo1 == null){
+     *          //Login again
+     *     }
+     * </pre>
+     *
+     * @param endpoint      DriveWealth search instrument endpoint
+     * @param sessionKey    Need valid session key for the API for authentication
+     * @param data          Map of Account data to create account
+     *
+     * @return List<DriveWealthJsonInstrument>
+    */
+    Public Static DriveWealthJsonMarketOrder createMarketOrder(String endpoint, Map<String, Object> data, String sessionKey) {
+        HTTPUtilities hu = new HTTPUtilities();
+        hu.setEndpoint(endpoint);
+        hu.setMethod('POST');
+        hu.setHeader('Content-Type', contentType);
+        hu.setHeader('x-mysolomeo-session-key', sessionKey);
+
+        hu.setBody(JSON.serialize(data));
+
+        HTTPResponse res = hu.sendRequest() ;
+
+        return DriveWealthJsonMarketOrder.parse(res.getBody());
     }
 }

@@ -1,0 +1,37 @@
+<!-- Create Market Order in DriveWealth -->
+<aura:component controller="DWCreateOrder_Controller" description="DWCreatePracticeOrder" implements="flexipage:availableForRecordHome, force:hasRecordId">
+
+    <!-- debug Apex code -->
+    <aura:attribute name="debug" type="Boolean" default="false" />
+
+    <c:ETLC_ApexBridge aura:id="ApexBridge" debugServer="{!v.debug}" />
+
+    <!--Setup initial information for creating a market order-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <!-- To store DriveWealth accounts (practice/live acocunt); needed so users can select which account to place order against-->
+    <aura:attribute type="Account" name="acc" />
+
+    <!-- Salesforce Account where we are placing this component -->
+    <aura:attribute type="ID" name="AccountID" />
+
+    <!-- Instrument information for order -->
+    <!-- TODO: Remove default value; this is for testing only until we build something to supply instrument ID AND Name -->
+    <aura:attribute name="instrumentID" type="String" default="459ce368-8f88-4fe1-8edb-d71c78af51f1" />
+    <aura:attribute name="instrumentName" type="String" default="Salesforce.com, Inc" />
+
+    <aura:registerEvent name="uiModalController" type="c:uiModalShowEvent"/>
+
+
+    <aura:if isTrue="{!v.acc != null }">
+        <lightning:button label="Create Market Order" onclick="{!c.createMarketOrder}" />
+
+        <c:uiModal />
+
+        <c:DWCreateMarketOrderForm acc="{!v.acc}" instrumentID="{!v.instrumentID}" instrumentName="{!v.instrumentName}" />
+        <aura:set attribute="else">
+            Please create an account with DriveWealth to create a Practice Order
+        </aura:set>
+    </aura:if>
+
+</aura:component>

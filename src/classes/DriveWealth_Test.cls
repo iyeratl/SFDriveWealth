@@ -145,7 +145,7 @@ private class DriveWealth_Test {
         Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
 
         //Data for Practice Account Creation
-        Map<String, String> data = new Map<String, String> ();
+        Map<String, Object> data = new Map<String, Object> ();
         data.put('emailAddress1', 'test@test.com2');//Pull from Account
         data.put('firstName', 'FirstName 2');//Pull from Account
         data.put('lastName', 'LastName 2');//Pull from Account
@@ -172,7 +172,7 @@ private class DriveWealth_Test {
         Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
 
         //Data for Practice Account Creation
-        Map<String, String> data = new Map<String, String> ();
+        Map<String, Object> data = new Map<String, Object> ();
         data.put('emailAddress1', 'test@test.com2');//Pull from Account
         data.put('firstName', 'FirstName 2');//Pull from Account
         data.put('lastName', 'LastName 2');//Pull from Account
@@ -187,7 +187,7 @@ private class DriveWealth_Test {
         DriveWealth.doCleanup();
         Test.stopTest();
 
-        System.assertEquals('02e57c7d-d071-4c63-b491-1194a9939ea5', res.userID);
+        System.assertEquals('02e57c7d-d071-4c63-b491-1194a9939ea5', res.userID) ;
     }
 
     @isTest
@@ -197,7 +197,7 @@ private class DriveWealth_Test {
         Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
 
         //Data for Practice Account Creation
-        Map<String, String> data = new Map<String, String> ();
+        Map<String, Object> data = new Map<String, Object> ();
         data.put('emailAddress1', 'test@test.com2');//Pull from Account
         data.put('firstName', 'FirstName 2');//Pull from Account
         data.put('lastName', 'LastName 2');//Pull from Account

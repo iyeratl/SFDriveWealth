@@ -34,6 +34,35 @@ private class DriveWealthAPI_Test {
 
 
     @isTest
+    private static void createMarketOrder_positive(){
+        DriveWealth__c dw = DriveWealth__c.getInstance();
+        System.assert(dw != null);
+
+        String endpoint = DriveWealthAPI.getEndpointCreateMarketOrder();
+
+        Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
+
+        Test.startTest();
+        Map<String, Object> data = new Map<String, String>();
+        data.put('accountID', '02e57c7d-d071-4c63-b491-1194a9939ea5.1452548617456');
+        data.put('accountNo', 'DWTE000005');
+        data.put('userID', '02e57c7d-d071-4c63-b491-1194a9939ea5');
+        data.put('accountType', 2);
+        data.put('ordType', 1);
+        data.put('side', 'B');
+        data.put('instrumentID', '06926627-e950-48f3-9c53-b679f61120ec');
+        data.put('orderQty', 1.4312) ;
+        data.put('comment', '');
+
+
+        DriveWealthJsonMarketOrder res = DriveWealthAPI.createMarketOrder(endpoint, data, 'sessionKey');
+        Test.stopTest();
+
+        System.assertEquals('DB.f88c392e-4d0a-4893-9623-baf72ac0296a', res.orderID);
+    }
+    /*
+
+    @isTest
     private static void DriveWealthEnpoint_Test(){
         System.assertEquals('http://api.drivewealth.io/v1/userSessions', DriveWealthAPI.getEndpointCreateSession());
         System.assertEquals('http://api.drivewealth.io/v1/userSessions/sessionKey', DriveWealthAPI.getEndpointGetSession('sessionKey'));

@@ -382,7 +382,7 @@ public with sharing class DriveWealth {
      *
      * @return DriveWealthJsonAccount
      */
-    public static DriveWealthJsonAccount createPracticeAccount(Map<String, String> data){
+    public static DriveWealthJsonAccount createPracticeAccount(Map<String, Object> data) {
         DriveWealthJsonAccount retVal = new DriveWealthJsonAccount();
         try{
             //If userID is provided then it's an existing account so we need to send session key
@@ -395,5 +395,26 @@ public with sharing class DriveWealth {
 
         return retVal ;
     }
+
+    /**
+      * Creating order needs information from multiple steps; http://developer.drivewealth.com/docs/add-market-order
+      * 1) Need to request Instrument information for stock; instrumentID
+      * 2) Present List of DW_Accounts and ask users to pick one (there should be only one as we are only creating Practice Accounts)
+      * --- Based on that selection, we can get accountID, accountNo, accountType, Account.userID
+      * 3) From user, we have to get ordType, side, orderQty
+      *
+      * Once we have this information, we can send it to DriveWealth
+     */
+    public static DriveWealthJsonMarketOrder createMarketOrder(Map<String, Object> data, String sessionKey){
+        DriveWealthJsonMarketOrder  retVal = new DriveWealthJsonMarketOrder();
+        try{
+            retVal = DriveWealthAPI.createMarketOrder(DriveWealthAPI.getEndpointCreateMarketOrder(), data, sessionKey) ;
+
+            //retVal might be null, in that case, login() again
+        }catch(Exception e){ Util.log('DriveWealth.createMarketOrder():Exception: ' + e.getMessage());  }
+
+        return retVal ;
+    }
+
 
 }

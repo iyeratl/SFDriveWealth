@@ -1,0 +1,10 @@
+<design:component>
+    <design:attribute name="debug" label="Debug" />
+    <!--
+        Limit this component for Account object as we need AccountID to establish session with DriveWealth
+        Also, all the actions will be performed for an account
+    -->
+    <sfdc:objects>
+        <sfdc:object>Account</sfdc:object>
+    </sfdc:objects>
+</design:component>

@@ -1,0 +1,29 @@
+<aura:component description="DWCreateMarketOrderForm">
+
+    <!-- To store DriveWealth accounts (practice/live acocunt); needed so users can select which account to place order against-->
+    <aura:attribute type="Account" name="acc"  access="public"/>
+
+    <!-- Instrument information for order -->
+    <!-- TODO: Remove default value; this is for testing only until we build something to supply instrument ID AND Name -->
+    <aura:attribute name="instrumentID" type="String" default="459ce368-8f88-4fe1-8edb-d71c78af51f1" access="public"/>
+    <aura:attribute name="instrumentName" type="String" default="Salesforce.com, Inc" access="public" />
+
+
+
+    <h3>Selected Symbol for order: <strong>{!v.instrumentName}</strong></h3>
+        <lightning:select name="select1" label="Select DriveWealth Account">
+            <aura:iteration items="{!v.acc.sfaip_fsc_dw__DW_Accounts__r.records}" var="obj">
+                <option value="{!obj.Id}">{!obj.Name}</option>
+            </aura:iteration>
+
+        </lightning:select>
+
+
+        <lightning:buttonGroup>
+            <lightning:button label="Refresh" />
+            <lightning:button label="Edit" />
+            <lightning:button label="Save" />
+        </lightning:buttonGroup>
+
+
+</aura:component>
