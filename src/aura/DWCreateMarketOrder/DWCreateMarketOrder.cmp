@@ -1,37 +1,76 @@
 <!-- Create Market Order in DriveWealth -->
-<aura:component controller="DWCreateOrder_Controller" description="DWCreatePracticeOrder" implements="flexipage:availableForRecordHome, force:hasRecordId">
+<aura:component controller="DWCreateOrder_Controller" implements="flexipage:availableForRecordHome,force:hasRecordId">
 
     <!-- debug Apex code -->
-    <aura:attribute name="debug" type="Boolean" default="false" />
+    <aura:attribute name="debug" type="Boolean" default="false" access="global"/>
+    <aura:attribute name="debugClient" type="Boolean" default="false" access="global" />
+    <!-- Salesforce Account where we are placing this component -->
+    <aura:attribute type="ID" name="recordId" access="public"/>
 
-    <c:ETLC_ApexBridge aura:id="ApexBridge" debugServer="{!v.debug}" />
+    <!-- For using ApexBridge Library -->
+    <c:ETLC_ApexBridge aura:id="ApexBridge" debugServer="{!v.debug}" debugClient="{!v.debugClient}"/>
+
+    <!-- For using Utils library -->
+    <c:Utils debug="{!v.debugClient}" aura:id="utils"  />
 
     <!--Setup initial information for creating a market order-->
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
 
+    <!-- Capture Instrument Info -->
+    <aura:registerEvent name="EvtInstrumentInfo" type="c:EvtInstrumentInfo" />
+    <aura:handler name="EvtInstrumentInfo" event="c:EvtInstrumentInfo" action="{!c.handleEvtInstrumentInfo}" />
+
     <!-- To store DriveWealth accounts (practice/live acocunt); needed so users can select which account to place order against-->
     <aura:attribute type="Account" name="acc" />
 
-    <!-- Salesforce Account where we are placing this component -->
-    <aura:attribute type="ID" name="AccountID" />
 
     <!-- Instrument information for order -->
     <!-- TODO: Remove default value; this is for testing only until we build something to supply instrument ID AND Name -->
-    <aura:attribute name="instrumentID" type="String" default="459ce368-8f88-4fe1-8edb-d71c78af51f1" />
-    <aura:attribute name="instrumentName" type="String" default="Salesforce.com, Inc" />
+    <aura:attribute name="instrumentID" type="String" />
+    <aura:attribute name="instrumentName" type="String" />
+    <aura:attribute name="instrumentUrl" type="String" />
+    <aura:attribute name="instrumentInfoSet" type="Boolean" default="false" />
+<!--
+  <aura:registerEvent name="uiModalController" type="c:uiModalShowEvent"/>
+    <c:uiModal />
+    <ui:button label="test" press="{!c.test}" />
+-->
 
-    <aura:registerEvent name="uiModalController" type="c:uiModalShowEvent"/>
+
+    <lightning:button label="Create Market Order" onclick="{!c.createMarketOrder}" />
+    <lightning:button label="Create Market Order (Switch Instument)" onclick="{!c.createMarketOrderSwitchIns}" />
+
+    <!-- If no instrument ID then don't show create order form -->
+    <aura:if isTrue="{!v.instrumentID}">
+        <div class="slds">
+            <div class="slds-page-header">
+                <div class="slds-grid">
+                    <div class="slds-col slds-has-flexi-truncate">
+                        <p class="slds-text-heading--label">Create Practice Order</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- If this account has DW_Account (i.e. corresponding account in DriveWealth for trading) ONLY THEN show form for order -->
+            <aura:if isTrue="{!v.acc.sfaip_fsc_dw__DW_Accounts__r }" >
 
 
-    <aura:if isTrue="{!v.acc != null }">
-        <lightning:button label="Create Market Order" onclick="{!c.createMarketOrder}" />
+                <!-- If instrument info is available then show the order form; otherwise ask user to search for instrument -->
+                <aura:if isTrue="{!v.instrumentInfoSet == true}">
+                    <div class="slds-col--padded slds-p-top--large">
+                        <c:DWCreateMarketOrderForm acc="{!v.acc}" instrumentID="{!v.instrumentID}"
+                                                   instrumentName="{!v.instrumentName}" instrumentUrl="{!v.instrumentUrl}"
+                                                   debug="{!v.debug}" debugClient="{!v.debugClient}"
+                        />
+                    </div>
+                </aura:if>
 
-        <c:uiModal />
-
-        <c:DWCreateMarketOrderForm acc="{!v.acc}" instrumentID="{!v.instrumentID}" instrumentName="{!v.instrumentName}" />
-        <aura:set attribute="else">
-            Please create an account with DriveWealth to create a Practice Order
-        </aura:set>
+                <aura:set attribute="else">
+                    <ui:message aura:id="noAccountMsg" title="No DriveWealth Account" severity="info" class="slds-hide">
+                        Please create an account with DriveWealth to create a Practice Order
+                    </ui:message>
+                </aura:set>
+            </aura:if>
+        </div>
     </aura:if>
-
 </aura:component>

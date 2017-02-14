@@ -1,0 +1,16 @@
+<!--
+    Utility component to add functions like log etc
+ -->
+<aura:component description="Utils"  >
+    <aura:attribute name="debugClient" type="Boolean" default="false" access="public"/>
+    <aura:method name="log" action="{!c.log}">
+        <aura:attribute name="message" type="String" />
+    </aura:method>
+    <aura:method name="createComponents" action="{!c.createComponents}">
+        <aura:attribute name="componentsToCreate" type="Object[]" />
+        <aura:attribute name="componentPlaceholder" type="Object" />
+    </aura:method>
+    <aura:method name="destroyComponents" action="{!c.destroyComponents}">
+        <aura:attribute name="componentPlaceholder" type="Object" />
+    </aura:method>
+</aura:component>

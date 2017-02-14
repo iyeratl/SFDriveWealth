@@ -4,4 +4,8 @@
     <aura:attribute type="String" name="instrumentID" />
     <!-- Instrument name can be used just to display  -->
     <aura:attribute type="String" name="instrumentName" />
+    <!-- Clickable URL for instrument; if needed -->
+    <aura:attribute type="String" name="instrumentUrl"  />
+    <!-- Who fired this event; just for logging if needed and not required  -->
+    <aura:attribute type="String" name="context" />
 </aura:event>

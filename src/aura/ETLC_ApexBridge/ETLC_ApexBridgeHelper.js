@@ -42,7 +42,7 @@
                         dataReturned.output = JSON.parse(dataReturned.output);
                         if (component.get("v.debugClient")) {
                             console.log('Back from Apex. ', dataReturned);
-                            debugger;
+                            //debugger;
                         }
                         callBackMethod.call(this, dataReturned);
                     } else {
@@ -52,7 +52,7 @@
                         }
                         console.error(msg);
                         if (component.get("v.debugClient")) {
-                            debugger;
+                            //debugger;
                         }
                         throw new Error(msg);
                     }

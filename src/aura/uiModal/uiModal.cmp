@@ -3,7 +3,7 @@
     <aura:attribute name="title" type="String" access="private" description="Modal Title" default="Modal Title"/>
     <aura:attribute name="tagline" type="String" access="private" description="Modal Tagline"/>
     <aura:attribute name="footerButtons" type="Object[]" access="private" description="Footer buttons" />
-    <aura:attribute  name="_modalContent" type="object" access="private" description="Object to hold component for destroy" />
+    <aura:attribute name="_modalContent" type="object" access="private" description="Object to hold component for destroy" />
 
     <div class="slds-modal" aria-hidden="true" role="dialog" aura:id="modalShell">
         <div class="slds-modal__container">
