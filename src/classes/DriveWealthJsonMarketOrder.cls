@@ -9,9 +9,10 @@ public class DriveWealthJsonMarketOrder {
     public Double leavesQty;
     public String ordType;
     public String side;
-    public Integer limitPrice;
+    public Double limitPrice;
     public String timeInForce;
     public String expireTimestamp;
+    public String commissionDesc;
     public String statusPath;
     public integer code; //400
     public String message; //"Invalid value: instrumentID"

@@ -11,6 +11,7 @@ public with sharing class DWSearchInstrument_Controller  extends ETLC_ApexBridge
      * @param ETLC_ApexBridge_Data Data sent by lightning component
      */
     public override void process(ETLC_ApexBridge_Data data) {
+        System.debug('DWSearchInstrument_Controller.process():data: ' + data);
         //Set debugging
         if (data.debug) {
             Util.debug = data.debug;
@@ -32,15 +33,15 @@ public with sharing class DWSearchInstrument_Controller  extends ETLC_ApexBridge
             Util.log('DWSearchInstrument_Controller.searchInstrument():AccountID: ' + AccountID);
             //Need to login to DriveWealth
             //User "generic" username/password from Custom Settings
-            DriveWealth.doSetup(AccountID);
+            DriveWealthJsonSession sessionInfo = DriveWealth.doSetup(AccountID);
+            if(sessionInfo != null) {
+                retVal = DriveWealth.searchInstrument(symbol);
+                //Update new session Info from DriveWealth
+                DriveWealth.doCleanup();
 
-            retVal = DriveWealth.searchInstrument(symbol);
-            //Update new session Info from DriveWealth
-            DriveWealth.doCleanup();
+                Util.log('DWSearchInstrument_Controller.searchInstrument().retVal: ' + retVal);
 
-            DriveWealth.searchInstrument(symbol);
-
-            Util.log('DWSearchInstrument_Controller.searchInstrument().retVal: ' + retVal);
+            }
         }catch(Exception e){ Util.log('DWSearchInstrument_Controller.searchInstrument():Exception: ' + e.getMessage()); }
 
         return retVal;

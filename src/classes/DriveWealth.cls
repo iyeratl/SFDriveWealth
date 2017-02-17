@@ -203,19 +203,36 @@ public with sharing class DriveWealth {
      * @return DriveWealthJsonSession
      */
     public static DriveWealthJsonSession doSetup(String AccountID){
-        return doSetup(AccountID, dw.Username__c, dw.Password__c);
+        return doSetup(AccountID, dw.Username__c, dw.Password__c, dw.User_ID__c);
     }
     /**
      * Same as doSetup but this one takes explicit username/password in case we need to supply it directly and not from Account
      *
+     * If you already have account username (Etc) info then pass it. But if not then pass null and it will be queried
+     *
      * @param AccountID ID of Account to retrieve information
      * @param Username DW Username to login
      * @param Password DW Password to login
+     * @param DWUserID User ID for DriveWealth
      */
-    public static DriveWealthJsonSession doSetup(String AccountID, String Username, String Password){
+    public static DriveWealthJsonSession doSetup(String AccountID, String Username, String Password, String DWUserId){
         try {
             Util.log('DriveWealth:init():doSetup:AccountID: ' + AccountID);
-            retrieveAccountInfo(AccountID);
+
+            //If username, password and user ID have been provided then no need to search
+            //Just set those directly
+            if(String.isNotEmpty(Username) && String.isNotEmpty(Password) && String.isNotEmpty(DWUserId)){
+                acc = new Account();
+                acc.Id = AccountID;
+                acc.DW_Username__c = Username;
+                acc.DW_Password__c = Password;
+                acc.DW_User_ID__c = DWUserId;
+
+                Util.log('DriveWealth:init():doSetup:acc: ' + acc);
+            }else{
+                retrieveAccountInfo(AccountID);
+            }
+
 
             if(acc != null) {
                 //Retrieve session information from object if it's there
@@ -405,10 +422,12 @@ public with sharing class DriveWealth {
       *
       * Once we have this information, we can send it to DriveWealth
      */
-    public static DriveWealthJsonMarketOrder createMarketOrder(Map<String, Object> data, String sessionKey){
+    public static DriveWealthJsonMarketOrder createMarketOrder(Map<String, Object> data){
         DriveWealthJsonMarketOrder  retVal = new DriveWealthJsonMarketOrder();
         try{
-            retVal = DriveWealthAPI.createMarketOrder(DriveWealthAPI.getEndpointCreateMarketOrder(), data, sessionKey) ;
+            retVal = DriveWealthAPI.createMarketOrder(DriveWealthAPI.getEndpointCreateMarketOrder(), data, dws.DW_Session_Key__c) ;
+            //retVal = DriveWealthAPI.createMarketOrder('http://requestb.in/1jw445t1', data, dws.DW_Session_Key__c) ;
+
 
             //retVal might be null, in that case, login() again
         }catch(Exception e){ Util.log('DriveWealth.createMarketOrder():Exception: ' + e.getMessage());  }

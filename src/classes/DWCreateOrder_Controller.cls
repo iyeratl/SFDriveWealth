@@ -23,7 +23,12 @@ public with sharing class DWCreateOrder_Controller  extends ETLC_ApexBridge_Abst
         }else if (mode == 'submitOrder') {
             Util.log('DWCreateOrder_Controller.process():data: ' + data);
             Util.log(data.getInputValue('acc'));
-            data.output = ETLC_ApexBridge_Data.encodeData(submitOrder((Map<String, Object>)data.getInputValue('acc'), (Map<String, Object>)data.getInputValue('orderInfo')));
+            data.output = ETLC_ApexBridge_Data.encodeData(
+                                submitOrder((Map<String, Object>)data.getInputValue('acc'),
+                                    (Map<String, Object>)data.getInputValue('orderInfo'),
+                                        (DriveWealthJsonInstrument)System.JSON.deserialize((String)data.getInputValue('instrument'), DriveWealthJsonInstrument.class)
+                                )
+                            );
         }
     }
 
@@ -42,7 +47,7 @@ public with sharing class DWCreateOrder_Controller  extends ETLC_ApexBridge_Abst
         }catch (SFDCAccessControlException e) {
             String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: ' + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: ' + e.getExceptionField() + ' Text: ' + e.getText();
             Util.log('DWCreateOrder_Controller.getDWAccountList():SFDCAccessControlException: ' + message);
-        }catch(Exception e){ Util.log('DriveWealth.retrieveDriveWealthSessionInfo():Exception: ' + e.getMessage()); }
+        }catch(Exception e){ Util.log('DWCreateOrder_Controller.getAccount():Exception: ' + e.getMessage()); }
         return retValue;
     }
 
@@ -57,30 +62,73 @@ public with sharing class DWCreateOrder_Controller  extends ETLC_ApexBridge_Abst
      * @param Map<String, Object> Account information for order
      * @param Map<String, Object> Order information to submit for Market Order
      */
-    public static Boolean submitOrder(Map<String, Object> acc, Map<String, Object> orderInfo) {
-        Map<String, Object> orderInfoToPlaceOrder = new Map<String, Object>();
-        orderInfoToPlaceOrder.put('accountID',acc.get('Id'));
-        orderInfoToPlaceOrder.put('','');
-        orderInfoToPlaceOrder.put('','');
-        orderInfoToPlaceOrder.put('','');
-        orderInfoToPlaceOrder.put('','');
-        orderInfoToPlaceOrder.put('','');
-        orderInfoToPlaceOrder.put('','');
-        orderInfoToPlaceOrder.put('','');
+    public static DriveWealthJsonMarketOrder submitOrder(Map<String, Object> acc, Map<String, Object> orderInfo, DriveWealthJsonInstrument instrument) {
+        DriveWealthJsonMarketOrder retVal = new DriveWealthJsonMarketOrder();
+
+        try {
+
+            //CRUD/FLS check
+            Boolean hasAccountViewPermission = Util.AccessController.isAuthorizedToCreate(
+                    Schema.DW_Order__c.getSobjectType(),
+                    new List<Schema.SobjectField>{
+                            Schema.DW_Order__c.fields.Comment__c, Schema.DW_Order__c.fields.DW_Account__c,
+                            Schema.DW_Order__c.fields.Order_ID__c, Schema.DW_Order__c.fields.Order_Quantity__c,
+                            Schema.DW_Order__c.fields.Order_Type__c, Schema.DW_Order__c.fields.Side__c,
+                            Schema.DW_Order__c.fields.Expires_Time_Stamp__c, Schema.DW_Order__c.fields.Instrument_ID__c,
+                            Schema.DW_Order__c.fields.Instrument_Name__c
+                    }
+            );
 
 
-                /*
-                  "accountID":"02e57c7d-d071-4c63-b491-1194a9939ea5.1452548617456",
-    "accountNo":"DWTE000005",
-    "userID":"02e57c7d-d071-4c63-b491-1194a9939ea5",
-    "accountType":2,
-    "ordType":"1",
-    "side":"B",
-    "instrumentID":"06926627-e950-48f3-9c53-b679f61120ec",
-    "orderQty":1.4312,
-    "comment":""
-                 */
-        Util.log('orderInfo: ' + orderInfo);
-        return true;
+            Util.log('DWCreateOrder_Controller.submitOrder():acc: ' + acc);
+            Util.log('DWCreateOrder_Controller.submitOrder():orderInfo: ' + orderInfo);
+            Util.log('DWCreateOrder_Controller.submitOrder():instrument: ' + instrument);
+
+
+            DW_Account__c dwAccount = DataQuery.getDWAccount((Id) orderInfo.get('sfaip_fsc_dw__DW_Account__c'));
+            Util.log('DWCreateOrder_Controller.submitOrder():dwAccount: ' + dwAccount);
+
+            Map<String, Object> orderInfoToPlaceOrder = new Map<String, Object>();
+            orderInfoToPlaceOrder.put('accountID', dwAccount.Account_ID__c);
+            orderInfoToPlaceOrder.put('accountNo', dwAccount.Account_No__c);
+            orderInfoToPlaceOrder.put('userID', dwAccount.Account__r.DW_User_ID__c);
+            orderInfoToPlaceOrder.put('accountType', dwAccount.Account_Type__c);
+            orderInfoToPlaceOrder.put('instrumentID', instrument.instrumentID);
+            orderInfoToPlaceOrder.put('ordType', orderInfo.get('sfaip_fsc_dw__Order_Type__c'));
+            orderInfoToPlaceOrder.put('side', orderInfo.get('sfaip_fsc_dw__Side__c'));
+            orderInfoToPlaceOrder.put('orderQty', Double.valueOf(orderInfo.get('sfaip_fsc_dw__Order_Quantity__c')));
+            orderInfoToPlaceOrder.put('comment', orderInfo.get('sfaip_fsc_dw__Comment__c'));
+
+
+            Util.log('DWCreateOrder_Controller.submitOrder():orderInfoToPlaceOrder: ' + orderInfoToPlaceOrder);
+
+            //Need to login to DriveWealth
+            DriveWealthJsonSession sessionInfo = DriveWealth.doSetup(dwAccount.Account__c, dwAccount.Account__r.DW_Username__c, dwAccount.Account__r.DW_Password__c, dwAccount.Account__r.DW_User_ID__c);
+            if(sessionInfo != null) {
+                retVal = DriveWealth.createMarketOrder(orderInfoToPlaceOrder);
+                Util.log('DWCreateOrder_Controller.submitOrder():retVal: ' + retVal);
+
+                //If code is null then it means call was succesfull and there was no error
+                if(retVal.code == null) {
+                    DW_Order__c dwOrder = new DW_Order__c();
+                    dwOrder.Comment__c = (String)orderInfo.get('sfaip_fsc_dw__Comment__c');
+                    dwOrder.DW_Account__c = dwAccount.Id;
+                    dwOrder.Order_ID__c = retVal.orderID;
+                    dwOrder.Order_Quantity__c = retVal.leavesQty;
+                    dwOrder.Order_Type__c = retVal.ordType;
+                    dwOrder.Side__c = retval.side;
+                    dwOrder.Expires_Time_Stamp__c = retVal.expireTimestamp ;
+                    dwOrder.Instrument_ID__c = retVal.instrumentID;
+                    dwOrder.Instrument_Name__c = instrument.name;
+
+                    insert dwOrder;
+                }
+                DriveWealth.doCleanup();
+            }
+
+
+        }catch(Exception e){ Util.log('DWCreateOrder_Controller.submitOrder():Exception: ' + e.getMessage()); }
+
+        return retVal;
     }
 }
