@@ -38,13 +38,21 @@
                     }
                 },
                 callBackMethod: function (data) {
-                    component.find('utils').log('searchInstrument.data: ' );
-                    component.find('utils').log(data);
-                    component.set('v.symbolList', data.output);
+                    component.find('utils').log('searchInstrument.data: ', data);
+                    component.set('v.instrumentList', data.output);
+                    if(data.output.length <=0 ){
+                        var message = Array();
+                        message.push(
+                            ["ui:message", {
+                                'severity': 'error',
+                                'body': 'Some error occured while searching for symbol'
+                            }]
+                        );
 
-                    var headers = Array();
-
-
+                        component.find('utils').createComponents(message, component.find('uiMessage'));
+                    }else{
+                        component.find('utils').destroyComponents(component.find('uiMessage'));
+                    }
                 }
             });
         }

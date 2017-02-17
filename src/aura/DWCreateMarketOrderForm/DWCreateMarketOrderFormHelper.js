@@ -38,9 +38,23 @@
 
         return retVal;
     },
+    fireEvtOrderCreated: function(component, helper) {
+        var data = component.get('v.order');
+
+        var appEvent = $A.get("e.c:EvtOrderCreated");
+        appEvent.setParams({
+            "order": data,
+            "context": "DWCreateMarketOrderForm.cmp"
+        });
+
+        component.find('utils').log('Firing EvtOrderCreated Event: ' + appEvent);
+
+        appEvent.fire();
+    },
     submitOrder: function(component, helper) {
         if(helper.isValid(component, helper) && component.isValid()) {
             var apexBridge = component.find("ApexBridge");
+            var instrument = component.get('v.instrument');
             apexBridge.callApex({
                 component: component,
                 data: {
@@ -48,13 +62,39 @@
                     input: {
                         acc: component.get('v.acc'),
                         orderInfo: component.get('v.dworder'),
-                        mode: 'submitOrder'
+                        mode: 'submitOrder',
+                        instrument: JSON.stringify(instrument)
                     }
                 },
                 callBackMethod: function (data) {
-                    component.find('utils').log('submitOrder.data: ');
-                    component.find('utils').log(data);
-                    var isComplete = data.output;
+                    component.find('utils').log('submitOrder.data: ', data);
+                    var data = data.output;
+
+                    var message = Array();
+
+                    if(data.code != null || typeof(data.orderID) == 'undefined' || $A.util.isUndefined(data.orderID)){
+                        message.push(
+                            ["ui:message", {
+                                'severity': 'error',
+                                'body': 'Some error occured while placing order: ' + data.message
+                            }]
+                        );
+                    }else{
+                        var message = Array();
+                        message.push(
+                            ["ui:message", {
+                                'severity': 'success',
+                                'body': 'Market order was succssfully created'
+                            }]
+                        );
+                        component.set('v.order', data);
+
+                        $A.util.addClass(component.find('createOrderForm'), 'slds-hide');
+
+                        //Fire event to indicate that order has been created
+                        helper.fireEvtOrderCreated(component, helper);
+                    }
+                    component.find('utils').createComponents(message, component.find('uiMessage'));
 
                 }
             });

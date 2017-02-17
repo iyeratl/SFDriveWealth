@@ -3,9 +3,10 @@
  */
 ({
     doInit: function(component, event, helper) {
-        console.log('test');
+       
     },
     searchSymbol: function(component, event, helper) {
         helper.searchSymbol(component, helper);
-    }
+    },
+
 })

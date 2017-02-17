@@ -4,7 +4,8 @@
     <aura:attribute name="debugClient" type="Boolean" default="false" access="global" />
     <!-- whether to show button to fire Instrument info event -->
     <aura:attribute name="fireEvtInstrumentInfo" type="Boolean" default="false"/>
-    <aura:attribute name="fireEvtInstrumentInfoName" type="String" default="Place Oder" />
+    <aura:attribute name="fireEvtInstrumentInfoName" type="String" default="Place Order" />
+    <aura:attribute name="showHeader" type="Boolean" default="True" />
 
     <!-- Salesforce Account where we are placing this component -->
     <aura:attribute type="ID" name="recordId" access="public"/>
@@ -18,16 +19,14 @@
     <!--Setup initial information for creating a market order-->
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
 
-
-
     <aura:attribute name="symbol" type="String" default="CRM"/>
 
-    <aura:attribute name="symbolList" type="Object[]" />
+    <aura:attribute name="instrumentList" type="DriveWealthJsonInstrument[]" />
 
 
 
     <div class="slds">
-        <div class="slds-page-header">
+        <div class="{!v.showHeader == true ? 'slds-page-header slds-show' : 'slds-page-header slds-hide'}">
             <div class="slds-grid">
                 <div class="slds-col slds-has-flexi-truncate">
                     <p class="slds-text-heading--label">Search symbol</p>
@@ -37,22 +36,23 @@
 
         <!-- ui:message will added in this div via createComponents() -->
         <div aura:id="uiMessage"></div>
+        <div class="slds-box slds-theme--default">
+            <!-- Input Form using components -->
+            <div  class="slds-form--inline">
+                <div class="slds-form-element">
+                    <div class="slds-form-element__control">
+                        <lightning:input label="Symbol (comma separated list; NO spaces)" aura:id="symbol" name="symbol" type="text" required="true"
+                                         value="{!v.symbol}" messageWhenBadInput="Please enter a symbol to search"
+                        />
+                    </div>
+                </div>
 
-        <!-- Input Form using components -->
-        <div  class="slds-form--inline">
-            <div class="slds-form-element">
-                <div class="slds-form-element__control">
-                    <lightning:input label="Symbol (comma separated list; NO spaces)" aura:id="symbol" name="symbol" type="text" required="true"
-                                     value="{!v.symbol}" messageWhenBadInput="Please enter a symbol to search"
-                    />
+                <div class="slds-form-element">
+                    <lightning:button label="Search" onclick="{!c.searchSymbol}" />
                 </div>
             </div>
-
-            <div class="slds-form-element">
-                <lightning:button label="Search Symbol" onclick="{!c.searchSymbol}" />
-            </div>
         </div>
-        <aura:if isTrue="{!v.symbolList.length > 0}">
+        <aura:if isTrue="{!v.instrumentList.length > 0}">
             <table class="slds-table slds-table--bordered slds-table--cell-buffer">
                 <thead>
                 <tr class="slds-text-title--caps">
@@ -70,7 +70,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <aura:iteration items="{!v.symbolList}" var="obj">
+                    <aura:iteration items="{!v.instrumentList}" var="obj">
                         <c:DWSearchInstrumentRow data="{!obj}"
                                                  fireEvtInstrumentInfo="{!v.fireEvtInstrumentInfo}"
                                                  fireEvtInstrumentInfoName="{!v.fireEvtInstrumentInfoName}"

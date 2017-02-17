@@ -5,8 +5,8 @@
     log: function(component, event, helper){
         var params = event.getParam('arguments');
         if (params) {
-            var message = params.message;
-            helper.log(component, helper, message);
+            //var message = params.message;
+            helper.log(component, helper, params);
         }
     },
     createComponents: function(component, event, helper) {
@@ -26,7 +26,7 @@
                         // Show offline error
                     }
                     else if (status === "ERROR") {
-                        helper.log(component, helper, "Error: " + errorMessage);
+                        helper.log(component, helper, {"Error: ": errorMessage});
                     }
                 }
             );
