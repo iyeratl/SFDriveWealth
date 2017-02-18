@@ -5,7 +5,7 @@
     <aura:attribute name="debug" type="Boolean" default="false" access="global"/>
     <aura:attribute name="debugClient" type="Boolean" default="false" access="global" />
     <!-- Salesforce Account where we are placing this component -->
-    <aura:attribute type="ID" name="recordId" access="public"/>
+    <aura:attribute type="ID" name="recordId" access="global"/>
 
     <!-- For using ApexBridge Library -->
     <c:ETLC_ApexBridge aura:id="ApexBridge" debugServer="{!v.debug}" debugClient="{!v.debugClient}"/>
@@ -20,7 +20,9 @@
     <!--<aura:registerEvent name="EvtInstrumentInfo" type="c:EvtInstrumentInfo" />-->
     <aura:handler name="EvtInstrumentInfo" event="c:EvtInstrumentInfo" action="{!c.handleEvtInstrumentInfo}" />
 
+    <!--
     <aura:handler event="c:EvtOrderCreated" action="{!c.handleEvtOrderCreated}" />
+    -->
 
     <!-- To store DriveWealth accounts (practice/live acocunt); needed so users can select which account to place order against-->
     <aura:attribute type="Account" name="acc" />
@@ -33,7 +35,6 @@
     <ui:button label="test" press="{!c.test}" />
 -->
 
-
     <div class="slds">
         <lightning:card >
             <aura:set attribute="title">
@@ -41,7 +42,7 @@
             </aura:set>
             <aura:set attribute="actions">
                 <!-- Show search button only if there is a DW account -->
-                <aura:if isTrue="{!v.acc.sfaip_fsc_dw__DW_Accounts__r }" >
+                <aura:if isTrue="{!v.acc.sfaip_fsc_dw__DW_Accounts__r.records }" >
                     <lightning:button label="Search Symbol" onclick="{!c.searchSymbol}"/>
                 </aura:if>
             </aura:set>
@@ -51,11 +52,12 @@
         </lightning:card>
 
         <!-- If this account has DW_Account (i.e. corresponding account in DriveWealth for trading) ONLY THEN show forms for serach and create order -->
-        <aura:if isTrue="{!v.acc.sfaip_fsc_dw__DW_Accounts__r }" >
+        <aura:if isTrue="{!v.acc.sfaip_fsc_dw__DW_Accounts__r.records }" >
             <!-- DWSearchInstrument component to search symbol -->
             <!-- helper.showSearchSymbolForm() is responsible to add content here; onInit and on button click -->
             <!-- It's done dynamically (with createComponent()) so we can destroy it if needed -->
             <div aura:id="searchSymbol">
+                {!v.body}
             </div>
 
 
@@ -63,6 +65,7 @@
             <!-- helper.showCreateMarketOrderForm() is responsible to add content here; after instrument has been searched -->
             <!-- It's done dynamically (with createComponent()) so we can destroy it if needed -->
             <div aura:id="createMarketOrderForm">
+                {!v.body}
             </div>
 
             <!-- can't see symbol search or create market order form if there is not account with DriveWealth -->

@@ -32,6 +32,30 @@
             );
         }
     },
+    createComponent: function(component, event, helper) {
+        var params = event.getParam('arguments');
+        if (params) {
+            var componentToCreate = params.componentToCreate;
+            var componentParams = params.componentParams;
+            var componentPlaceholder = params.componentPlaceholder;
+
+            $A.createComponent(componentToCreate, componentParams,
+                function(components, status, errorMessage){
+                    if (status === "SUCCESS") {
+                        // set the body of the ui:message to be the ui:outputText
+                        componentPlaceholder.set("v.body", components);
+                    }
+                    else if (status === "INCOMPLETE") {
+                        helper.log(component, helper, "No response from server or client is offline.")
+                        // Show offline error
+                    }
+                    else if (status === "ERROR") {
+                        helper.log(component, helper, {"Error: ": errorMessage});
+                    }
+                }
+            );
+        }
+    },
     destroyComponents: function(component, event, helper) {
         var params = event.getParam('arguments');
         if (params) {

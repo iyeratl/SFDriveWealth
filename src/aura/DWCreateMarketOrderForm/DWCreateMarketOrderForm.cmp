@@ -1,11 +1,15 @@
 <aura:component description="DWCreateMarketOrderForm" controller="DWCreateOrder_Controller">
 
     <!-- To store DriveWealth accounts (practice/live acocunt); needed so users can select which account to place order against-->
-    <aura:attribute type="Account" name="acc" />
+    <aura:attribute type="Account" name="acc" access="public"/>
+
+    <!-- TODO: Workaround for strange bug where related records are not loaded the first time -->
+    <!-- https://org62.lightning.force.com/one/one.app#/sObject/0D50M000032hJOwSAM/view-->
+    <aura:attribute type="Object[]" name="dwAccRecords" access="public"/>
+    <!-- TODO: Remove above workaround -->
 
     <!-- Instrument information for order -->
-    <aura:attribute name="instrument" type="DriveWealthJsonInstrument" />
-
+    <aura:attribute name="instrument" type="DriveWealthJsonInstrument" access="public" />
 
     <!-- debug Apex code -->
     <aura:attribute name="debug" type="Boolean" default="false" access="public"/>
@@ -41,6 +45,12 @@
     <!-- ui:message will added in this div via createComponents() -->
     <div aura:id="uiMessage"></div>
 
+    <!--
+    <aura:iteration items="{!v.acc.sfaip_fsc_dw__DW_Accounts__r}" var="obj">
+        {!obj.records}
+    </aura:iteration>
+    -->
+
     <!-- Input Form using components -->
     <div  class="slds-box slds-theme--default" aura:id="createOrderForm">
         <div class="slds-form-element">
@@ -64,7 +74,10 @@
                                   value="{!v.dworder.sfaip_fsc_dw__DW_Account__c}"
                                   messageWhenValueMissing="Please select an Account!">
                     <option value="">Select an Account</option>
-                    <aura:iteration items="{!v.acc.sfaip_fsc_dw__DW_Accounts__r.records}" var="obj">
+                    <!--
+                        <aura:iteration items="{!v.acc.sfaip_fsc_dw__DW_Accounts__r.records}" var="obj">
+                    -->
+                    <aura:iteration items="{!v.dwAccRecords}" var="obj">
                         <option value="{!obj.Id}">{!obj.Name}</option>
                     </aura:iteration>
                 </lightning:select>
