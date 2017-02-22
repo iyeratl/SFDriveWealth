@@ -18,14 +18,41 @@
 
 
     <tr>
-        <th scope="row" data-label="{!v.data.symbol}">
-            <div class="slds-truncate" title="{!v.data.symbol}">{!v.data.symbol} </div>
+        <th scope="col" data-label="{!v.data.symbol}">
+            <div class="slds-truncate" title="{!v.data.symbol}">
+                <aura:if isTrue="{!v.data.urlInvestor != null }">
+                {!v.data.urlInvestor}++
+                    <ui:outputURL value="{!v.data.urlInvestor}" label="{!v.data.symbol}"/>
+                    <aura:set attribute="else">
+                        {!v.data.symbol}
+                    </aura:set>
+                </aura:if>
+            </div>
         </th>
-        <th scope="row" data-label="{!v.data.category}">
+        <th scope="col" data-label="{!v.data.category}">
             <div class="slds-truncate" title="{!v.data.category}">{!v.data.category} </div>
         </th>
+        <th scope="col" data-label="{!v.data.rateAsk}">
+            <div class="slds-truncate" title="{!v.data.rateAsk}">{!v.data.rateAsk} </div>
+        </th>
+        <th scope="col" data-label="{!v.data.rateBid}">
+            <div class="slds-truncate" title="{!v.data.rateBid}">{!v.data.rateBid} </div>
+        </th>
+        <th scope="col" data-label="{!v.data.tradeStatus}">
+            <div class="slds-truncate" title="{!v.data.tradeStatus}">
+                <aura:if isTrue="{!v.data.tradeStatus == 0}">
+                    Inactive
+                </aura:if>
+                <aura:if isTrue="{!v.data.tradeStatus == 1}">
+                    Active
+                </aura:if>
+                <aura:if isTrue="{!v.data.tradeStatus == 2}">
+                    Close Positions Only
+                </aura:if>
+            </div>
+        </th>
         <aura:if isTrue="{!v.fireEvtInstrumentInfo}">
-            <th scope="row" data-label="{!v.data.symbol}">
+            <th scope="col" data-label="{!v.data.symbol}">
                 <div class="slds-truncate" title="{!v.data.symbol}">
                     <lightning:button label="Place Order" onclick="{!v.placeOrderAction}" value="{!v.data}" />
                 </div>

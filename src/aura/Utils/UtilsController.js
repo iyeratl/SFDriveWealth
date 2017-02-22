@@ -62,6 +62,21 @@
             var componentPlaceholder = params.componentPlaceholder;
             componentPlaceholder.set("v.body", []);
         }
+    },
+    toggleSpinner: function(component, event, helper) {
+        var params = event.getParam('arguments');
+        if (params) {
+            var spinner = params.spinnerComponent;
+
+            var evt = spinner.get("e.toggle");
+            if(!$A.util.hasClass(spinner, 'hideEl')) {
+                evt.setParams({isVisible: false});
+            }else {
+                evt.setParams({ isVisible : true });
+            }
+            evt.fire();
+
+        }
     }
 
 })

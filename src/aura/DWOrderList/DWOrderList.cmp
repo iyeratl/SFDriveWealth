@@ -49,78 +49,75 @@
         <div aura:id="uiMessage"></div>
 
         <aura:if isTrue="{!v.orders.length > 0}">
-            <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+            <table class="slds-table slds-table--bordered slds-table--fixed-layout" role="grid">
                 <thead>
-                <tr class="slds-text-title--caps">
-                    <th scope="col">
-                        <div class="slds-truncate" title="Fetch Status">Fetch Status</div>
+                <tr class="slds-line-height--reset">
+                    <th scope="col" >
+                        <div class="slds-th__action slds-th__action--form">
+                            Fetch Status
+                        </div>
                     </th>
-                    <th scope="col">
-                        <div class="slds-truncate" title="Status">Status</div>
+                    <th class="slds-text-title--caps" scope="col">
+                        Status
                     </th>
-                    <th scope="col">
-                        <div class="slds-truncate" title="Execution Date">Execution Date</div>
+                    <th class="slds-text-title--caps" scope="col">
+                        Exec Date
                     </th>
-                    <th scope="col">
-                        <div class="slds-truncate" title="Quantity">Quantity</div>
+                    <th class="slds-text-title--caps" scope="col">
+                        QTY
                     </th>
-                    <th scope="col">
-                        <div class="slds-truncate" title="DW Account">DW Account</div>
+                    <th class="slds-text-title--caps" scope="col">
+                        DW Account
                     </th>
-                    <th scope="col">
-                        <div class="slds-truncate" title="Symbol">Symbol</div>
+                    <th class="slds-text-title--caps" scope="col">
+                        Symbol
                     </th>
-                    <th scope="col">
-                        <div class="slds-truncate" title="Order Type">Order Type</div>
+                    <th class="slds-text-title--caps" scope="col">
+                        Buy/Sell
                     </th>
-                    <th scope="col">
-                        <div class="slds-truncate" title="Buy/Sell">Buy/Sell</div>
-                    </th>
-                    <th scope="col">
-                        <div class="slds-truncate" title="Created Date">Created Date</div>
+                    <th class="slds-text-title--caps" scope="col">
+                        Created Date
                     </th>
                 </tr>
                 </thead>
+
                 <tbody>
                 <aura:iteration items="{!v.orders}" var="obj" indexVar="key">
                       <tr>
-                        <th scope="row" data-label="Update Status">
+                        <th scope="col" data-label="Update Status">
                                 <div class="slds-truncate" title="Fetch Status">
                                         <lightning:button label="Fetch Status" value="{!key}" onclick="{!c.fetchStatus}"/>
                                 </div>
                         </th>
-                        <th scope="row" data-label="{!obj.value.sfaip_fsc_dw__Order_Status__c}">
+                        <th scope="col" data-label="{!obj.value.sfaip_fsc_dw__Order_Status__c}">
                             <div class="slds-truncate" title="{!obj.value.sfaip_fsc_dw__Order_Status__c}">
                                     {!obj.value.sfaip_fsc_dw__Order_Status__c}
                             </div>
                         </th>
-                        <th scope="row" data-label="{!obj.value.sfaip_fsc_dw__Executed_When__c}">
+                          <td role="gridcell">
                             <div class="slds-truncate" title="{!obj.value.sfaip_fsc_dw__Executed_When__c}">
                                     {!obj.value.sfaip_fsc_dw__Executed_When__c}
                             </div>
-                        </th>
-                        <th scope="row" data-label="{!obj.value.sfaip_fsc_dw__Order_Quantity__c}">
+                        </td>
+                        <th scope="col" data-label="{!obj.value.sfaip_fsc_dw__Order_Quantity__c}">
                             <div class="slds-truncate" title="{!obj.value.sfaip_fsc_dw__Order_Quantity__c}">
                                 {!obj.value.sfaip_fsc_dw__Order_Quantity__c}
                             </div>
                         </th>
-                        <th scope="row" data-label="{!obj.value.sfaip_fsc_dw__DW_Account__r.Name}">
+                        <th scope="col" data-label="{!obj.value.sfaip_fsc_dw__DW_Account__r.Name}">
                             <div class="slds-truncate" title="{!obj.value.sfaip_fsc_dw__DW_Account__r.Name}">
-                                    {!obj.value.sfaip_fsc_dw__DW_Account__r.Name}
+                                    <ui:outputURL value="{! '/' + obj.value.sfaip_fsc_dw__DW_Account__c}" label="{!obj.value.sfaip_fsc_dw__DW_Account__r.Name}"/>
                             </div>
                         </th>
-                        <th scope="row" data-label="{!obj.value.sfaip_fsc_dw__Instrument_Name__c}">
-                            <div class="slds-truncate" title="{!obj.value.sfaip_fsc_dw__Instrument_Name__c}">
-                                {!obj.value.sfaip_fsc_dw__Instrument_Name__c}
+                        <th scope="col" data-label="{!obj.value.sfaip_fsc_dw__Instrument_Symbol__c}">
+                            <div class="slds-truncate" title="{!obj.value.sfaip_fsc_dw__Instrument_Symbol__c}">
+                                {!obj.value.sfaip_fsc_dw__Instrument_Symbol__c}
                             </div>
                         </th>
-                        <th scope="row" data-label="{!obj.value.sfaip_fsc_dw__Order_Type__c}">
-                            <div class="slds-truncate" title="{!obj.value.sfaip_fsc_dw__Order_Type__c}">{!obj.value.sfaip_fsc_dw__Order_Type__c}</div>
-                        </th>
-                        <th scope="row" data-label="{!obj.value.sfaip_fsc_dw__Side__c}">
+                        <th scope="col" data-label="{!obj.value.sfaip_fsc_dw__Side__c}">
                             <div class="slds-truncate" title="{!obj.value.sfaip_fsc_dw__Side__c}">{!obj.value.sfaip_fsc_dw__Side__c}</div>
                         </th>
-                        <th scope="row" data-label="{!obj.value.sfaip_fsc_dw__CreatedDate}">
+                        <th scope="col" data-label="{!obj.value.sfaip_fsc_dw__CreatedDate}">
                             <div class="slds-truncate" title="{!obj.value.CreatedDate}">
                                 <ui:outputDate value="{!obj.value.CreatedDate}"/>
                             </div>

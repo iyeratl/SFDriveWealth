@@ -108,8 +108,9 @@ public with sharing class DataQuery {
 
         Map<Id, DW_Order__c> retVal = new  Map<Id, DW_Order__c>(
                 [Select Id, DW_Account__r.Name, DW_Account__c, Instrument_Name__c, Order_Quantity__c, Order_ID__c,
-                        Order_Type__c, Side__c, Order_Status__c, Executed_When__c, CreatedDate
-                    FROM DW_Order__c where Account__c=:AccountID]
+                        Order_Type__c, Side__c, Order_Status__c, Executed_When__c, CreatedDate, Instrument_Symbol__c
+                    FROM DW_Order__c where Account__c=:AccountID
+                    ORDER BY CreatedDate ASC]
         );
         return retval;
     }

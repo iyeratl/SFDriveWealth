@@ -54,6 +54,8 @@ private class DWCreateOrder_Controller_Test {
 
         DriveWealthJsonInstrument instrument = new DriveWealthJsonInstrument();
         instrument.instrumentID = 'IDID';
+        instrument.Name = 'INS Name';
+        instrument.symbol = 'CRM';
 
         Map<String, Object> data = new Map<String, Object>{'mode'=>'submitOrder', 'acc' => acc,
                                                 'orderInfo' => orderInfo,

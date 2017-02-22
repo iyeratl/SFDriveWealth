@@ -131,6 +131,7 @@ public with sharing class DWCreateOrder_Controller  extends ETLC_ApexBridge_Abst
                     dwOrder.Instrument_ID__c = retVal.instrumentID;
                     dwOrder.Instrument_Name__c = instrument.name;
                     dwOrder.Account__c = (Id)acc.get('Id');
+                    dwOrder.Instrument_Symbol__c = instrument.symbol;
 
                     Util.log('DWCreateOrder_Controller.submitOrder():BEFORE Insert:dwOrder: ' + dwOrder);
                     insert dwOrder;

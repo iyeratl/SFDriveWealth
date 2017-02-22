@@ -18,4 +18,7 @@
     <aura:method name="destroyComponents" action="{!c.destroyComponents}">
         <aura:attribute name="componentPlaceholder" type="Object" />
     </aura:method>
+    <aura:method name="toggleSpinner" action="{!c.toggleSpinner}">
+        <aura:attribute name="spinnerComponent" type="Object" />
+    </aura:method>
 </aura:component>

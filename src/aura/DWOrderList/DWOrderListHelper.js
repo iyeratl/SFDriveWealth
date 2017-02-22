@@ -16,6 +16,7 @@
 
                 var orders = [], key;
                 for ( key in data.output ) {
+                    data.output[key].sfaip_fsc_dw__Executed_When__c = helper.dateFromSpecialString(data.output[key].sfaip_fsc_dw__Executed_When__c);
                     orders.push({value:data.output[key], key:key});
                 }
                 component.set('v.orders', orders);
@@ -35,6 +36,14 @@
                 }
             }
         });
+    },
+    dateFromSpecialString: function(str) {
+        try {
+            var dateObject = new Date(Date.parse(str));
+
+            return dateObject.toDateString();
+        }catch(err){}
+        return str;
     },
     fetchStatus: function(component, helper, orderIndex){
         var orders = component.get('v.orders');

@@ -26,6 +26,9 @@
     },
     searchSymbol: function(component, helper) {
         if(helper.isValid(component, helper) && component.isValid()) {
+            //Spinner when searching for symbol
+            component.find('utils').toggleSpinner(component.find('spinner'));
+
             var apexBridge = component.find("ApexBridge");
             apexBridge.callApex({
                 component: component,
@@ -39,7 +42,6 @@
                 },
                 callBackMethod: function (data) {
                     component.find('utils').log('searchInstrument.data: ', data);
-                    component.set('v.instrumentList', data.output);
                     if(data.output.length <=0 ){
                         var message = Array();
                         message.push(
@@ -51,8 +53,13 @@
 
                         component.find('utils').createComponents(message, component.find('uiMessage'));
                     }else{
+
+                        component.set('v.instrumentList', data.output);
+
                         component.find('utils').destroyComponents(component.find('uiMessage'));
                     }
+
+                    component.find('utils').toggleSpinner(component.find('spinner'));
                 }
             });
         }

@@ -29,6 +29,7 @@
 
 
     <div class="slds">
+
         <div class="{!v.showHeader == true ? 'slds-page-header slds-show' : 'slds-page-header slds-hide'}">
             <div class="slds-grid">
                 <div class="slds-col slds-has-flexi-truncate">
@@ -55,6 +56,8 @@
                 </div>
             </div>
         </div>
+        <ui:spinner aura:id="spinner" isVisible="false"/>
+
         <aura:if isTrue="{!v.instrumentList.length > 0}">
             <table class="slds-table slds-table--bordered slds-table--cell-buffer">
                 <thead>
@@ -64,6 +67,15 @@
                     </th>
                     <th scope="col">
                         <div class="slds-truncate" title="Category">Category</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Rate Ask">Rate Ask</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Rate Bid">Rate Bid</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Rate Bid">Trade Status</div>
                     </th>
                     <aura:if isTrue="{!v.fireEvtInstrumentInfo}">
                         <th scope="col">

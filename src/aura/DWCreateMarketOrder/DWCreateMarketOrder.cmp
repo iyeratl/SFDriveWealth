@@ -43,7 +43,7 @@
             <aura:set attribute="actions">
                 <!-- Show search button only if there is a DW account -->
                 <aura:if isTrue="{!v.acc.sfaip_fsc_dw__DW_Accounts__r.records }" >
-                    <lightning:button label="Search Symbol" onclick="{!c.searchSymbol}"/>
+                    <lightning:button label="Start Again" onclick="{!c.searchSymbol}"/>
                 </aura:if>
             </aura:set>
             <p class="slds-p-horizontal--small">
