@@ -24,10 +24,72 @@ private class DriveWealth_Test {
 
     }
 
-    /**
-     * Shoudl return proper code because,w ith invalid session, it should do login again
-     */
+    @isTest
+    private static void doSetup_positive_with_username_password(){
+        Account acc = [SELECT Id, DW_Username__c, DW_Password__C from Account where name='Account A0' limit 1];
 
+        Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
+
+        //Data for Market account
+        Map<String, Object> data = new Map<String, Object> ();
+        data.put('emailAddress1', 'test@test.com2');//Pull from Account
+        data.put('firstName', 'FirstName 2');//Pull from Account
+        data.put('lastName', 'LastName 2');//Pull from Account
+        data.put('referralCode', 'refcode');
+        //If new account then provide username/password
+        data.put('username', 'user');
+        data.put('password', 'pass');
+
+        Test.startTest();
+        DriveWealth.doSetup(acc.Id, 'username', 'password', 'userid');
+        DriveWealthJsonMarketOrder res = DriveWealth.createMarketOrder(data);
+        DriveWealth.doCleanup();
+        Test.stopTest();
+
+        System.assertEquals('DB.f88c392e-4d0a-4893-9623-baf72ac0296a', res.orderID);
+    }
+
+
+    @isTest
+    private static void createMarketOrder_positive(){
+        Account acc = [SELECT Id, DW_Username__c, DW_Password__C from Account where name='Account A0' limit 1];
+
+        Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
+
+        //Data for Market account
+        Map<String, Object> data = new Map<String, Object> ();
+        data.put('emailAddress1', 'test@test.com2');//Pull from Account
+        data.put('firstName', 'FirstName 2');//Pull from Account
+        data.put('lastName', 'LastName 2');//Pull from Account
+        data.put('referralCode', 'refcode');
+        //If new account then provide username/password
+        data.put('username', 'user');
+        data.put('password', 'pass');
+
+        Test.startTest();
+        DriveWealth.doSetup(acc.Id);
+        DriveWealthJsonMarketOrder res = DriveWealth.createMarketOrder(data);
+        DriveWealth.doCleanup();
+        Test.stopTest();
+
+        System.assertEquals('DB.f88c392e-4d0a-4893-9623-baf72ac0296a', res.orderID);
+    }
+
+
+    @isTest
+    private static void getOrderStatus_positive(){
+        Account acc = [SELECT Id, DW_Username__c, DW_Password__C from Account where name='Account A0' limit 1];
+
+        Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
+
+        Test.startTest();
+        DriveWealth.doSetup(acc.Id);
+        DriveWealthJsonOrderStatus res = DriveWealth.getOrderStatus('123');
+        DriveWealth.doCleanup();
+        Test.stopTest();
+
+        System.assertEquals('8', res.ordStatus);
+    }
 
     @isTest
     private static void login_withActiveSessionButWrongKeyName_pass() {

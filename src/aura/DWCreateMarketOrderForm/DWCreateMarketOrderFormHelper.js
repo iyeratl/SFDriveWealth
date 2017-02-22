@@ -84,7 +84,7 @@
                         message.push(
                             ["ui:message", {
                                 'severity': 'success',
-                                'body': 'Market order was succssfully created'
+                                'body': 'Market order was succssfully placed'
                             }]
                         );
                         component.set('v.order', data);

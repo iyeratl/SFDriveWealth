@@ -18,6 +18,9 @@
 
     <!--Setup initial information for creating a market order-->
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <!-- Raise event for selected symbol to place order -->
+    <aura:registerEvent name="EvtInstrumentInfo" type="c:EvtInstrumentInfo" />
 
     <aura:attribute name="symbol" type="String" default="CRM"/>
 
@@ -75,6 +78,8 @@
                                                  fireEvtInstrumentInfo="{!v.fireEvtInstrumentInfo}"
                                                  fireEvtInstrumentInfoName="{!v.fireEvtInstrumentInfoName}"
                                                  debug="{!v.debug}" debugClient="{!v.debugClient}"
+                                                 placeOrderAction="{!c.placeOrder}"
+
                         />
                     </aura:iteration>
                 </tbody>

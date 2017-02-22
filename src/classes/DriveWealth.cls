@@ -76,8 +76,7 @@ public with sharing class DriveWealth {
 
             }
         }catch (SFDCAccessControlException e) {
-            String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: ' + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: ' + e.getExceptionField() + ' Text: ' + e.getText();
-            Util.log('DriveWealth.retrieveDriveWealthSessionInfo():SFDCAccessControlException: ' + message);
+            String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: ' + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: ' + e.getExceptionField() + ' Text: ' + e.getText();Util.log('DriveWealth.retrieveDriveWealthSessionInfo():SFDCAccessControlException: ' + message);
         }catch(Exception e){ Util.log('DriveWealth.retrieveDriveWealthSessionInfo():Exception: ' + e.getMessage()); }
         return dws;
     }
@@ -125,8 +124,7 @@ public with sharing class DriveWealth {
             Util.log('DriveWealth.setDWSessionInfo():Upsert: ' + dws) ;
 
         }catch (SFDCAccessControlException e) {
-            String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: ' + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: ' + e.getExceptionField() + ' Text: ' + e.getText();
-            Util.log('DriveWealth.setDWSessionInfo():SFDCAccessControlException: ' + message);
+            String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: ' + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: ' + e.getExceptionField() + ' Text: ' + e.getText();Util.log('DriveWealth.setDWSessionInfo():SFDCAccessControlException: ' + message);
         }catch(Exception e){ Util.log('DriveWealth.setDWSessionInfo():Exception: ' + e.getMessage()); }
     }
 
@@ -188,8 +186,7 @@ public with sharing class DriveWealth {
             }
         }
         catch (SFDCAccessControlException e) {
-            String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: ' + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: ' + e.getExceptionField() + ' Text: ' + e.getText();
-            Util.log('DriveWealth.retrieveAccountInfo():Exception: ' + message);
+            String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: ' + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: ' + e.getExceptionField() + ' Text: ' + e.getText();Util.log('DriveWealth.retrieveAccountInfo():Exception: ' + message);
         }catch(Exception e){ Util.log('DriveWealth.retrieveAccountInfo():Exception: ' + e.getMessage()); }
     }
     /**
@@ -431,6 +428,20 @@ public with sharing class DriveWealth {
 
             //retVal might be null, in that case, login() again
         }catch(Exception e){ Util.log('DriveWealth.createMarketOrder():Exception: ' + e.getMessage());  }
+
+        return retVal ;
+    }
+
+    /**
+      * Get Order status for an Order ID
+      *
+     */
+    public static DriveWealthJsonOrderStatus getOrderStatus(String OrderID){
+        DriveWealthJsonOrderStatus  retVal = new DriveWealthJsonOrderStatus();
+        try{
+            retVal = DriveWealthAPI.getOrderStatus(DriveWealthAPI.getEndpointOrderStatus(), OrderID, dws.DW_Session_Key__c) ;
+
+        }catch(Exception e){ Util.log('DriveWealth.getOrderStatus():Exception: ' + e.getMessage());  }
 
         return retVal ;
     }

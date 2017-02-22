@@ -34,6 +34,33 @@ private class DriveWealthAPI_Test {
 
 
     @isTest
+    private static void createAccount_negative(){
+        DriveWealth__c dw = DriveWealth__c.getInstance();
+        System.assert(dw != null);
+
+        String endpoint = DriveWealthAPI.getEndpointCreatePracticeAccount();
+
+        Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
+
+        Test.startTest();
+        Map<String, String> data = new Map<String, String>();
+        data.put('username', 'abcd1234');
+        data.put('password', 'abcd1234');
+        DriveWealthJsonAccount res = DriveWealthAPI.createPracticeAccount(endpoint, data, 'sessKey401');
+        Test.stopTest();
+
+        System.assertEquals(401, res.code);
+    }
+    @isTest
+    private static void createAccount_negative_runas(){
+        dataSetupForRunAs();
+        System.runAs(u){
+            createAccount_negative();
+        }
+    }
+
+
+    @isTest
     private static void createMarketOrder_positive(){
         DriveWealth__c dw = DriveWealth__c.getInstance();
         System.assert(dw != null);
@@ -43,7 +70,7 @@ private class DriveWealthAPI_Test {
         Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
 
         Test.startTest();
-        Map<String, Object> data = new Map<String, String>();
+        Map<String, Object> data = new Map<String, Object>();
         data.put('accountID', '02e57c7d-d071-4c63-b491-1194a9939ea5.1452548617456');
         data.put('accountNo', 'DWTE000005');
         data.put('userID', '02e57c7d-d071-4c63-b491-1194a9939ea5');
@@ -51,7 +78,7 @@ private class DriveWealthAPI_Test {
         data.put('ordType', 1);
         data.put('side', 'B');
         data.put('instrumentID', '06926627-e950-48f3-9c53-b679f61120ec');
-        data.put('orderQty', 1.4312) ;
+        data.put('orderQty', 1.4312);
         data.put('comment', '');
 
 
@@ -60,7 +87,24 @@ private class DriveWealthAPI_Test {
 
         System.assertEquals('DB.f88c392e-4d0a-4893-9623-baf72ac0296a', res.orderID);
     }
-    /*
+
+
+    @isTest
+    private static void getOrderStatus_positive(){
+        DriveWealth__c dw = DriveWealth__c.getInstance();
+        System.assert(dw != null);
+
+        String endpoint = DriveWealthAPI.getOrderStatus();
+
+        Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
+
+        Test.startTest();
+        DriveWealthJsonOrderStatus res = DriveWealthAPI.getOrderStatus(endpoint, '123', 'sessionKey');
+        Test.stopTest();
+
+        System.assertEquals('8', res.ordStatus);
+    }
+
 
     @isTest
     private static void DriveWealthEnpoint_Test(){
@@ -288,31 +332,6 @@ private class DriveWealthAPI_Test {
         }
     }
 
-    @isTest
-    private static void createAccount_negative(){
-        DriveWealth__c dw = DriveWealth__c.getInstance();
-        System.assert(dw != null);
-
-        String endpoint = DriveWealthAPI.getEndpointCreatePracticeAccount() + '401';
-
-        Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
-
-        Test.startTest();
-        Map<String, String> data = new Map<String, String>();
-        data.put('username', 'abcd1234');
-        data.put('password', 'abcd1234');
-        DriveWealthJsonAccount res = DriveWealthAPI.createPracticeAccount(endpoint, data, 'sessionKey');
-        Test.stopTest();
-
-        System.assertEquals(401, res.code);
-    }
-    @isTest
-    private static void createAccount_negative_runas(){
-        dataSetupForRunAs();
-        System.runAs(u){
-            createAccount_negative();
-        }
-    }
     /****/
 
 }

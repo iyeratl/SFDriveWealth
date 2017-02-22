@@ -60,10 +60,9 @@
         //<c:DWCreateMarketOrderForm acc="{!v.acc}" instrument="{!v.instrument}" debug="{!v.debug}" debugClient="{!v.debugClient}" />
         var cmpArr = Array();
 
-        //TODO: Workaround for strange bug where related records are not loaded the first time
-        //https://org62.lightning.force.com/one/one.app#/sObject/0D50M000032hJOwSAM/view
+        //Workaround for strange bug where related records are not loaded the first time
         var acc = component.get('v.acc');
-        //TODO: Remove above
+        //Workaround
 
         cmpArr.push(
             ["c:DWCreateMarketOrderForm",
@@ -72,10 +71,9 @@
                     debugClient: component.get('v.debugClient'),
                     instrument: component.get('v.instrument'),
                     acc: component.get('v.acc'),
-                    //TODO: Workaround for strange bug where related records are not loaded the first time
-                    //https://org62.lightning.force.com/one/one.app#/sObject/0D50M000032hJOwSAM/view
+                    //Workaround for strange bug where related records are not loaded the first time
                     dwAccRecords: acc.sfaip_fsc_dw__DW_Accounts__r.records
-                    //TODO: Remove Above
+                    //Workaround
                 }
             ]
         );

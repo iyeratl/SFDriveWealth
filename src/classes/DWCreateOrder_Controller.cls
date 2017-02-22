@@ -3,6 +3,17 @@
  */
 
 public with sharing class DWCreateOrder_Controller  extends ETLC_ApexBridge_Abstract {
+    private static  Map<String, String> orderType = new Map<String, String>();
+    private static  Map<String, String> side = new Map<String, String>();
+
+    //These MAPs will be used when order is created and then to convert some values to readable strings
+    static {
+        orderType.put('1', 'Market Order');
+
+        side.put('B', 'Buy');
+        side.put('S', 'Sell');
+    }
+
     /**
      * Method implementation for method in abstract class ETLC_ApexBridge_Abstract
      *
@@ -45,8 +56,7 @@ public with sharing class DWCreateOrder_Controller  extends ETLC_ApexBridge_Abst
             retValue = DataQuery.getAccount(AccountId);
             Util.log('DriveWealth.retrieveDriveWealthSessionInfo():retValue: ' + retValue);
         }catch (SFDCAccessControlException e) {
-            String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: ' + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: ' + e.getExceptionField() + ' Text: ' + e.getText();
-            Util.log('DWCreateOrder_Controller.getDWAccountList():SFDCAccessControlException: ' + message);
+            String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: ' + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: ' + e.getExceptionField() + ' Text: ' + e.getText();Util.log('DWCreateOrder_Controller.getDWAccountList():SFDCAccessControlException: ' + message);
         }catch(Exception e){ Util.log('DWCreateOrder_Controller.getAccount():Exception: ' + e.getMessage()); }
         return retValue;
     }
@@ -115,13 +125,16 @@ public with sharing class DWCreateOrder_Controller  extends ETLC_ApexBridge_Abst
                     dwOrder.DW_Account__c = dwAccount.Id;
                     dwOrder.Order_ID__c = retVal.orderID;
                     dwOrder.Order_Quantity__c = retVal.leavesQty;
-                    dwOrder.Order_Type__c = retVal.ordType;
-                    dwOrder.Side__c = retval.side;
+                    dwOrder.Order_Type__c = orderType.get(retVal.ordType);
+                    dwOrder.Side__c = side.get(retval.side);
                     dwOrder.Expires_Time_Stamp__c = retVal.expireTimestamp ;
                     dwOrder.Instrument_ID__c = retVal.instrumentID;
                     dwOrder.Instrument_Name__c = instrument.name;
+                    dwOrder.Account__c = (Id)acc.get('Id');
 
+                    Util.log('DWCreateOrder_Controller.submitOrder():BEFORE Insert:dwOrder: ' + dwOrder);
                     insert dwOrder;
+                    Util.log('DWCreateOrder_Controller.submitOrder():AFTER Insert:dwOrder: ' + dwOrder);
                 }
                 DriveWealth.doCleanup();
             }

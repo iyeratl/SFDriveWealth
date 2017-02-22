@@ -24,7 +24,8 @@ public with sharing class DataQuery {
         Boolean hasAccountViewPermission = Util.AccessController.isAuthorizedToView(
             Schema.Account.getSobjectType(),
             new List<Schema.SobjectField>{
-                    Schema.Account.fields.Name
+                    Schema.Account.fields.Name, Schema.Account.fields.DW_Username__c,
+                    Schema.Account.fields.DW_Password__c, Schema.Account.fields.DW_User_ID__c
             }
         );
 
@@ -36,7 +37,7 @@ public with sharing class DataQuery {
         );
 
         Account a;
-        List<Account> listAcc =  [select ID, Name, (select Id, Name from DW_Accounts__r) from Account WHERE Id=:AccountId];
+        List<Account> listAcc =  [select ID, Name, DW_Username__c, DW_Password__c, DW_User_ID__c, (select Id, Name from DW_Accounts__r) from Account WHERE Id=:AccountId];
         if(listAcc.size() > 0 ){
             a = listAcc[0];
         }
@@ -78,4 +79,60 @@ public with sharing class DataQuery {
                     from DW_Account__c WHERE Id=:DWAccountID];
     }
 
+    /**
+     * return list of all orders associated with an account
+     */
+
+    public static  Map<Id, DW_Order__c> getOrders(Id AccountID) {
+        //CRUD/FLS check
+        //Chek for DW Account
+        Boolean hasDWAccountViewPermission = Util.AccessController.isAuthorizedToView(
+                Schema.DW_Account__c.getSobjectType(),
+                new List<Schema.SobjectField>{
+                        Schema.DW_Account__c.fields.Name
+                }
+        );
+
+        //Chek for Order
+        Boolean hasDWOrderViewPermission = Util.AccessController.isAuthorizedToView(
+                Schema.DW_Order__c.getSobjectType(),
+                new List<Schema.SobjectField>{
+                        Schema.DW_Order__c.fields.DW_Account__c, Schema.DW_Order__c.fields.Instrument_Name__c,
+                        Schema.DW_Order__c.fields.Order_Quantity__c, Schema.DW_Order__c.fields.Order_ID__c,
+                        Schema.DW_Order__c.fields.Order_Type__c, Schema.DW_Order__c.fields.Side__c,
+                        Schema.DW_Order__c.fields.Order_Status__c, Schema.DW_Order__c.fields.Executed_When__c
+                }
+        );
+
+        //CRUD/FLS check
+
+        Map<Id, DW_Order__c> retVal = new  Map<Id, DW_Order__c>(
+                [Select Id, DW_Account__r.Name, DW_Account__c, Instrument_Name__c, Order_Quantity__c, Order_ID__c,
+                        Order_Type__c, Side__c, Order_Status__c, Executed_When__c, CreatedDate
+                    FROM DW_Order__c where Account__c=:AccountID]
+        );
+        return retval;
+    }
+
+    /**
+     * return order based on Order ID
+     */
+    public static  DW_Order__c getOrder(Id OrderID) {
+
+        //Chek for Order
+        Boolean hasDWAccountViewPermission = Util.AccessController.isAuthorizedToView(
+                Schema.DW_Order__c.getSobjectType(),
+                new List<Schema.SobjectField>{
+                        Schema.DW_Order__c.fields.Name
+                }
+        );
+
+        DW_Order__c  dwOrder;
+        List<DW_Order__c> dwOrderList = [Select Id, Order_ID__c FROM DW_Order__c where Id=:OrderId];
+        if(dwOrderList.size() > 0){
+            dwOrder = dwOrderList[0];
+        }
+        return dwOrder;
+    }
+    /**/
 }

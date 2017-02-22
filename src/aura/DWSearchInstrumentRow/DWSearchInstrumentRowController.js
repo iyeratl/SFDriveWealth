@@ -1,4 +1,5 @@
 ({
+    /*
     placeOrder: function(component, event, helper) {
         var data = component.get('v.data');
         var evt = component.getEvent('EvtInstrumentInfo');
@@ -9,4 +10,5 @@
         component.find('utils').log('Firing EvtInstrumentInfo Event: ' + evt);
         evt.fire();
     }
+    /**/
 })

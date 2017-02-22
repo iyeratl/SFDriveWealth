@@ -32,6 +32,9 @@ global class HTTPMockResponse implements HttpCalloutMock {
             }
         }else if(req.getEndpoint() == 'http://api.drivewealth.io/v1/orders' && req.getMethod() == 'POST') {
             res = createMarketOrder_positive();
+        }else if(req.getEndpoint().startsWith('http://api.drivewealth.io/v1/orders/a') && req.getMethod() == 'GET') {
+            //Using stasrtsWith because we don't know what will be the order ID
+            res = getOrderStatus_positive();
         }
 
     return res;
@@ -155,6 +158,18 @@ global class HTTPMockResponse implements HttpCalloutMock {
         HttpResponse res = new HttpResponse();
         res.setHeader('Content-Type', 'application/json');
         res.setBody('{"orderID": "DB.f88c392e-4d0a-4893-9623-baf72ac0296a","instrumentID": "06926627-e950-48f3-9c53-b679f61120ec","leavesQty": 1.4312,"ordType": "1","side": "B","limitPrice": 0,"timeInForce": "0","expireTimestamp": "2016-02-08T21:00:00.000Z","statusPath": "/v1/orders/DB.f88c392e-4d0a-4893-9623-baf72ac0296a"}');
+        res.setStatusCode(200);
+        return res;
+    }
+    /**
+     * getOrderStatus Mock Resonse
+     * http://api.drivewealth.io/v1/orders/ORDERID
+     */
+
+    private static HTTPResponse getOrderStatus_positive(){
+        HttpResponse res = new HttpResponse();
+        res.setHeader('Content-Type', 'application/json');
+        res.setBody('{ "orderID": "DA.c69f5f51-04ce-4796-a748-67306cdbcb17", "accountID": "02e57c7d-d071-4c63-b491-1194a9939ea5.1452548617456", "userID": "02e57c7d-d071-4c63-b491-1194a9939ea5", "cumQty": 0, "accountNo": "DWTE000005", "commission": 0, "createdByID": "02e57c7d-d071-4c63-b491-1194a9939ea5", "createdWhen": "2016-01-11T22:01:09.066Z", "execType": "8", "grossTradeAmt": 0, "instrumentID": "675cc7c2-e24b-42fa-9d1f-4b3a97ae8d2f", "lastPx": 0, "lastQty": 0, "leavesQty": 0, "orderNo": "DAQB000017", "orderQty": 13, "ordRejReason": "Non-Margin accounts cannot sell short.", "ordStatus": "8", "ordType": "1", "price": 0, "rateAsk": 0, "rateBid": 0, "side": "S", "accountType": 2, "autoStop": 0, "limitPrice": 0, "timeInForce": "0", "isoTimeRestingOrderExpires": "2016-01-12T21:00:00.000Z", "internalMemo": "OGW ACH", "amountCash": 0}');
         res.setStatusCode(200);
         return res;
     }

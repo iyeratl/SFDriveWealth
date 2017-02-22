@@ -48,6 +48,11 @@ global with sharing class DriveWealthAPI {
         return dw.endpoint__c + 'orders';
     }
 
+    /** Endpoint for getting order status  */
+    public static String getEndpointOrderStatus() {
+        return dw.endpoint__c + 'orders';
+    }
+
     /** Default values for some of the information required by DriveWealth API */
     public static string contentType = 'application/json';
     public static String appTypeId = '2000';
@@ -236,7 +241,7 @@ global with sharing class DriveWealthAPI {
      *
      * <pre>
      *     //Single symbol search
-     *     DriveWealthJsonAccount inInfo1 = DriveWealthAPI.createPracticeAccount('http://api.drivewealth.io/v1/signups/practice', 'SESSION_KEY', {name: NAME....});
+     *     DriveWealthJsonAccount inInfo1 = DriveWealthAPI.createMartketOrder('http://api.drivewealth.io/v1/orders', 'SESSION_KEY', {name: NAME....});
      *     if(inInfo1 == null){
      *          //Login again
      *     }
@@ -260,5 +265,35 @@ global with sharing class DriveWealthAPI {
         HTTPResponse res = hu.sendRequest() ;
 
         return DriveWealthJsonMarketOrder.parse(res.getBody());
+    }
+    /**
+     * Check order Status; http://developer.drivewealth.com/docs/get_market
+     *
+     * NOTE: Use try/catch when calling this code. It's upto the calling code to figure out how to deal with exceptions
+     *
+     * <pre>
+     *     //Single symbol search
+     *     DriveWealthJsonAccount inInfo1 = DriveWealthAPI.createPracticeAccount('http://api.drivewealth.io/v1/orders/ORDERID', 'SESSION_KEY', {name: NAME....});
+     *     if(inInfo1 == null){
+     *          //Login again
+     *     }
+     * </pre>
+     *
+     * @param endpoint      DriveWealth search instrument endpoint
+     * @param sessionKey    Need valid session key for the API for authentication
+     * @param data          Map of Account data to create account
+     *
+     * @return List<DriveWealthJsonInstrument>
+    */
+    Public Static DriveWealthJsonOrderStatus getOrderStatus(String endpoint, String OrderID, String sessionKey) {
+        HTTPUtilities hu = new HTTPUtilities();
+        hu.setEndpoint(endpoint + '/' + OrderID);
+        hu.setMethod('GET');
+        hu.setHeader('Content-Type', contentType);
+        hu.setHeader('x-mysolomeo-session-key', sessionKey);
+
+        HTTPResponse res = hu.sendRequest() ;
+
+        return DriveWealthJsonOrderStatus.parse(res.getBody());
     }
 }

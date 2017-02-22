@@ -52,6 +52,19 @@
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
     <fields>
+        <fullName>Account__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Account</label>
+        <referenceTo>Account</referenceTo>
+        <relationshipLabel>DW Orders</relationshipLabel>
+        <relationshipName>DW_Orders</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
         <fullName>Comment__c</fullName>
         <externalId>false</externalId>
         <label>Comment</label>
@@ -75,6 +88,18 @@
         <trackTrending>false</trackTrending>
         <type>MasterDetail</type>
         <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Executed_When__c</fullName>
+        <defaultValue>&quot;Not Executed&quot;</defaultValue>
+        <externalId>false</externalId>
+        <label>Executed When</label>
+        <length>30</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Expires_Time_Stamp__c</fullName>
@@ -133,6 +158,43 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Order_Status__c</fullName>
+        <description>&quot;0&quot; - New, &quot;1&quot; - Partial Fill, &quot;2&quot; - Fill, &quot;4&quot; - Canceled, &quot;8&quot; - Rejected.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>&quot;0&quot; - New, &quot;1&quot; - Partial Fill, &quot;2&quot; - Fill, &quot;4&quot; - Canceled, &quot;8&quot; - Rejected.</inlineHelpText>
+        <label>Order Status</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>New</fullName>
+                    <default>true</default>
+                </value>
+                <value>
+                    <fullName>Fill</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Canceled</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Rejected</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Partial Fill</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
         <fullName>Order_Type__c</fullName>
         <externalId>false</externalId>
         <label>Order Type</label>
@@ -145,7 +207,7 @@
             <valueSetDefinition>
                 <sorted>false</sorted>
                 <value>
-                    <fullName>1</fullName>
+                    <fullName>Market Order</fullName>
                     <default>false</default>
                 </value>
             </valueSetDefinition>
@@ -164,11 +226,11 @@
             <valueSetDefinition>
                 <sorted>false</sorted>
                 <value>
-                    <fullName>B</fullName>
+                    <fullName>Buy</fullName>
                     <default>false</default>
                 </value>
                 <value>
-                    <fullName>S</fullName>
+                    <fullName>Sell</fullName>
                     <default>false</default>
                 </value>
             </valueSetDefinition>
