@@ -12,7 +12,7 @@ global with sharing class DriveWealthAPI {
     /** Logic to get endpoint URL, userbame and password stored in custom setting */
     private static DriveWealth__c dw = DriveWealth__c.getInstance();
 
-    /** API Endpoint for login like http://api.drivewealth.io/v1/userSessions */
+    /** API Endpoint for login like https://api.drivewealth.io/v1/userSessions */
     private static String endpointLogin = 'userSessions';
 
     /** End point for establishing new session with DriveWealth; http://developer.drivewealth.com/docs/create-session*/
@@ -82,7 +82,7 @@ global with sharing class DriveWealthAPI {
      *
      * <pre>
      *     try{
-     *          DriveWealthJsonSession dwSession = DriveWealthAPI.createSession('http://api.drivewealth.io/v1/userSessions', 'username', 'password');
+     *          DriveWealthJsonSession dwSession = DriveWealthAPI.createSession('https://api.drivewealth.io/v1/userSessions', 'username', 'password');
      *          if(String.isNotBlank(dwSession.sessionKey)) {
      *              //Success
      *          }else{
@@ -109,7 +109,6 @@ global with sharing class DriveWealthAPI {
         data.put('scrRes', scrRes);
         data.put('password', password);
 
-
         HTTPUtilities hu = new HTTPUtilities();
         hu.setEndpoint(endpoint);
         hu.setMethod('POST');
@@ -132,7 +131,7 @@ global with sharing class DriveWealthAPI {
      * <pre>
      *     try{
      *          DriveWealthSession__c dws = DriveWealthSession__c.getInstance(UserInfo.getUserId());
-     *          DriveWealthJsonSession dwSession = DriveWealthAPI.getSession('http://api.drivewealth.io/v1/userSessions/SESSION_KEY', 'SESSION_KEY')
+     *          DriveWealthJsonSession dwSession = DriveWealthAPI.getSession('https://api.drivewealth.io/v1/userSessions/SESSION_KEY', 'SESSION_KEY')
      *          if(dwSession == null || dwSession != 200) {
      *              //Session invalid
      *              //Explicit login
@@ -165,13 +164,13 @@ global with sharing class DriveWealthAPI {
      *
      * <pre>
      *     //Single symbol search
-     *     List<DriveWealthJsonInstrument> inInfo1 = DriveWealthAPI.searchInstrument('http://api.drivewealth.io/v1/instruments?symbol=CRM', 'SESSION_KEY');
+     *     List<DriveWealthJsonInstrument> inInfo1 = DriveWealthAPI.searchInstrument('https://api.drivewealth.io/v1/instruments?symbol=CRM', 'SESSION_KEY');
      *     if(inInfo1 == null){
      *          //Login again and retry
      *     }
      *
      *     //Multiple symbol search
-     *     List<DriveWealthJsonInstrument> inInfo1 = DriveWealthAPI.searchInstrument('http://api.drivewealth.io/v1/instruments?symbol=CRM,AAPL', 'SESSION_KEY');
+     *     List<DriveWealthJsonInstrument> inInfo1 = DriveWealthAPI.searchInstrument('https://api.drivewealth.io/v1/instruments?symbol=CRM,AAPL', 'SESSION_KEY');
      * </pre>
      *
      * @param endpoint      DriveWealth search instrument endpoint
@@ -206,7 +205,7 @@ global with sharing class DriveWealthAPI {
      *
      * <pre>
      *     //Single symbol search
-     *     DriveWealthJsonAccount inInfo1 = DriveWealthAPI.createPracticeAccount('http://api.drivewealth.io/v1/signups/practice', 'SESSION_KEY', {name: NAME....});
+     *     DriveWealthJsonAccount inInfo1 = DriveWealthAPI.createPracticeAccount('https://api.drivewealth.io/v1/signups/practice', 'SESSION_KEY', {name: NAME....});
      *     if(inInfo1 == null){
      *          //Login again
      *     }
@@ -241,7 +240,7 @@ global with sharing class DriveWealthAPI {
      *
      * <pre>
      *     //Single symbol search
-     *     DriveWealthJsonAccount inInfo1 = DriveWealthAPI.createMartketOrder('http://api.drivewealth.io/v1/orders', 'SESSION_KEY', {name: NAME....});
+     *     DriveWealthJsonAccount inInfo1 = DriveWealthAPI.createMartketOrder('https://api.drivewealth.io/v1/orders', 'SESSION_KEY', {name: NAME....});
      *     if(inInfo1 == null){
      *          //Login again
      *     }
@@ -273,7 +272,7 @@ global with sharing class DriveWealthAPI {
      *
      * <pre>
      *     //Single symbol search
-     *     DriveWealthJsonAccount inInfo1 = DriveWealthAPI.createPracticeAccount('http://api.drivewealth.io/v1/orders/ORDERID', 'SESSION_KEY', {name: NAME....});
+     *     DriveWealthJsonAccount inInfo1 = DriveWealthAPI.createPracticeAccount('https://api.drivewealth.io/v1/orders/ORDERID', 'SESSION_KEY', {name: NAME....});
      *     if(inInfo1 == null){
      *          //Login again
      *     }

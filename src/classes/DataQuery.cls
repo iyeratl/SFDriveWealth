@@ -25,7 +25,8 @@ public with sharing class DataQuery {
             Schema.Account.getSobjectType(),
             new List<Schema.SobjectField>{
                     Schema.Account.fields.Name, Schema.Account.fields.DW_Username__c,
-                    Schema.Account.fields.DW_Password__c, Schema.Account.fields.DW_User_ID__c
+                    Schema.Account.fields.DW_Password__c, Schema.Account.fields.DW_User_ID__c,
+                    Schema.Account.fields.DW_Total_Practice_Accounts__c
             }
         );
 
@@ -37,7 +38,7 @@ public with sharing class DataQuery {
         );
 
         Account a;
-        List<Account> listAcc =  [select ID, Name, DW_Username__c, DW_Password__c, DW_User_ID__c, (select Id, Name from DW_Accounts__r) from Account WHERE Id=:AccountId];
+        List<Account> listAcc =  [select ID, Name, DW_Username__c, DW_Password__c, DW_User_ID__c, DW_Total_Practice_Accounts__c, (select Id, Name from DW_Accounts__r) from Account WHERE Id=:AccountId];
         if(listAcc.size() > 0 ){
             a = listAcc[0];
         }

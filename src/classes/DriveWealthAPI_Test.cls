@@ -8,11 +8,11 @@ private class DriveWealthAPI_Test {
     @testSetup
     private static void dataSetup(){
         DriveWealth__c dw = new DriveWealth__c();
-        dw.endpoint__c = 'http://api.drivewealth.io/v1/';
+        dw.endpoint__c = 'https://api.drivewealth.io/v1/';
         insert dw;
 
         List<Account> listAcc = new List<Account>();
-        for(Integer i=0;i<300; i++){
+        for(Integer i=0;i<10; i++){
             Account acc = new Account();
             acc.Name = 'Account A' + i;
             acc.DW_Username__c = 'abc1234';
@@ -94,12 +94,12 @@ private class DriveWealthAPI_Test {
         DriveWealth__c dw = DriveWealth__c.getInstance();
         System.assert(dw != null);
 
-        String endpoint = DriveWealthAPI.getOrderStatus();
+        String endpoint = DriveWealthAPI.getEndpointOrderStatus();
 
         Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
 
         Test.startTest();
-        DriveWealthJsonOrderStatus res = DriveWealthAPI.getOrderStatus(endpoint, '123', 'sessionKey');
+        DriveWealthJsonOrderStatus res = DriveWealthAPI.getOrderStatus(endpoint, 'a', 'sessionKey');
         Test.stopTest();
 
         System.assertEquals('8', res.ordStatus);
@@ -108,8 +108,8 @@ private class DriveWealthAPI_Test {
 
     @isTest
     private static void DriveWealthEnpoint_Test(){
-        System.assertEquals('http://api.drivewealth.io/v1/userSessions', DriveWealthAPI.getEndpointCreateSession());
-        System.assertEquals('http://api.drivewealth.io/v1/userSessions/sessionKey', DriveWealthAPI.getEndpointGetSession('sessionKey'));
+        System.assertEquals('https://api.drivewealth.io/v1/userSessions', DriveWealthAPI.getEndpointCreateSession());
+        System.assertEquals('https://api.drivewealth.io/v1/userSessions/sessionKey', DriveWealthAPI.getEndpointGetSession('sessionKey'));
 
     }
     @isTest
@@ -152,7 +152,7 @@ private class DriveWealthAPI_Test {
         DriveWealth__c dw = DriveWealth__c.getInstance();
         System.assert(dw != null);
 
-        String endpoint = 'http://api.drivewealth.io/v1/userSessionsINVALID';
+        String endpoint = 'https://api.drivewealth.io/v1/userSessionsINVALID';
         Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
 
         Account acc = [SELECT Id, DW_Username__c, DW_Password__C from Account where name='Account A0' limit 1];

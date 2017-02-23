@@ -7,9 +7,7 @@ public with sharing class DWCreateAccount {
             //Then create new Practice account
             //Hint: Use SOQL or initial data load to get this informaiton in, say, Lightning Component
             String AccountID = '00141000007RP8w';
-            Account a = [select Id, AccountNumber, DW_Username__c, DW_Password__c, DW_Total_Practice_Accounts__c
-                            from account
-                            where id=:AccountId];
+            Account a = DataQuery.getAccount(AccountId);
 
             //If no DW Accounts then create one
             if(a.DW_Total_Practice_Accounts__c <= 0 ){
@@ -35,7 +33,7 @@ public with sharing class DWCreateAccount {
                 DriveWealthJsonAccount aInfo = DriveWealth.createPracticeAccount(data);
 
                 //Now login with new username/password to start session and get account info
-                DriveWealthJsonSession sessionInfo = DriveWealth.doSetup(a.Id, username, password);
+                DriveWealthJsonSession sessionInfo = DriveWealth.doSetup(a);
 
 
                 //userID as returned after creating user

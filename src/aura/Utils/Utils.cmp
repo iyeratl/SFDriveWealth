@@ -20,5 +20,6 @@
     </aura:method>
     <aura:method name="toggleSpinner" action="{!c.toggleSpinner}">
         <aura:attribute name="spinnerComponent" type="Object" />
+        <aura:attribute name="isVisible" type="Boolean" default="false" />
     </aura:method>
 </aura:component>

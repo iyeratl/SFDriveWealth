@@ -94,9 +94,11 @@ public with sharing class DWCreateOrder_Controller  extends ETLC_ApexBridge_Abst
             Util.log('DWCreateOrder_Controller.submitOrder():orderInfo: ' + orderInfo);
             Util.log('DWCreateOrder_Controller.submitOrder():instrument: ' + instrument);
 
-
             DW_Account__c dwAccount = DataQuery.getDWAccount((Id) orderInfo.get('sfaip_fsc_dw__DW_Account__c'));
             Util.log('DWCreateOrder_Controller.submitOrder():dwAccount: ' + dwAccount);
+
+
+            Account acRecord = DataQuery.getAccount(dwAccount.Account__c);
 
             Map<String, Object> orderInfoToPlaceOrder = new Map<String, Object>();
             orderInfoToPlaceOrder.put('accountID', dwAccount.Account_ID__c);
@@ -113,8 +115,8 @@ public with sharing class DWCreateOrder_Controller  extends ETLC_ApexBridge_Abst
             Util.log('DWCreateOrder_Controller.submitOrder():orderInfoToPlaceOrder: ' + orderInfoToPlaceOrder);
 
             //Need to login to DriveWealth
-            DriveWealthJsonSession sessionInfo = DriveWealth.doSetup(dwAccount.Account__c, dwAccount.Account__r.DW_Username__c, dwAccount.Account__r.DW_Password__c, dwAccount.Account__r.DW_User_ID__c);
-            if(sessionInfo != null) {
+            DriveWealthJsonSession sessionInfo = DriveWealth.doSetup(acRecord);
+            if(sessionInfo != null) { 
                 retVal = DriveWealth.createMarketOrder(orderInfoToPlaceOrder);
                 Util.log('DWCreateOrder_Controller.submitOrder():retVal: ' + retVal);
 

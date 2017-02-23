@@ -27,7 +27,7 @@
     searchSymbol: function(component, helper) {
         if(helper.isValid(component, helper) && component.isValid()) {
             //Spinner when searching for symbol
-            component.find('utils').toggleSpinner(component.find('spinner'));
+            component.find('utils').toggleSpinner(component.find('spinner'), true);
 
             var apexBridge = component.find("ApexBridge");
             apexBridge.callApex({
@@ -59,7 +59,7 @@
                         component.find('utils').destroyComponents(component.find('uiMessage'));
                     }
 
-                    component.find('utils').toggleSpinner(component.find('spinner'));
+                    component.find('utils').toggleSpinner(component.find('spinner'), false);
                 }
             });
         }

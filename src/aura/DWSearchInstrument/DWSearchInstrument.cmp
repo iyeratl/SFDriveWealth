@@ -1,4 +1,4 @@
-<aura:component description="DWSearchInstrument" implements="flexipage:availableForRecordHome,force:hasRecordId">
+<aura:component description="DWSearchInstrument" implements="flexipage:availableForRecordHome,force:hasRecordId" access="global">
     <!-- debug Apex code -->
     <aura:attribute name="debug" type="Boolean" default="false" access="global"/>
     <aura:attribute name="debugClient" type="Boolean" default="false" access="global" />
@@ -25,7 +25,6 @@
     <aura:attribute name="symbol" type="String" default="CRM"/>
 
     <aura:attribute name="instrumentList" type="DriveWealthJsonInstrument[]" />
-
 
 
     <div class="slds">

@@ -3,7 +3,7 @@
  */
 
 public with sharing class DWOrderList_Controller extends ETLC_ApexBridge_Abstract {
-    private static  Map<String, String> orderStatus = new Map<String, String>();
+    private static  Map<String, String> orderStatus = new Map<String, String>(); 
 
     //These MAPs will be used when order is created and then to convert some values to readable strings
     static{
@@ -57,8 +57,9 @@ public with sharing class DWOrderList_Controller extends ETLC_ApexBridge_Abstrac
         try{
             Util.log('DWOrderList_Controller.fetchStatus():OrderID: ' + OrderID);
             DW_Order__c dwOrder = DataQuery.getOrder(OrderID);
-            Account acc = DataQuery.getAccount(AccountID);
             Util.log('DWOrderList_Controller.fetchStatus():dwOrder: ' + dwOrder);
+
+            Account acc = DataQuery.getAccount(AccountID);
 
             //Chek for Order
             //Need to update status after fetching
@@ -68,7 +69,7 @@ public with sharing class DWOrderList_Controller extends ETLC_ApexBridge_Abstrac
                             Schema.DW_Order__c.fields.Order_Status__c, Schema.DW_Order__c.fields.Executed_When__c
                     }
             );
-            DriveWealthJsonSession sessionInfo = DriveWealth.doSetup(AccountID, acc.DW_Username__c, acc.DW_Password__C, acc.DW_User_ID__c);
+            DriveWealthJsonSession sessionInfo = DriveWealth.doSetup(acc);
             if(sessionInfo != null) {
                 retVal = DriveWealth.getOrderStatus((String) dwOrder.Order_ID__c);
 

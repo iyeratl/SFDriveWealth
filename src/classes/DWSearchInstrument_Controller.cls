@@ -11,7 +11,7 @@ public with sharing class DWSearchInstrument_Controller  extends ETLC_ApexBridge
      * @param ETLC_ApexBridge_Data Data sent by lightning component
      */
     public override void process(ETLC_ApexBridge_Data data) {
-        System.debug('DWSearchInstrument_Controller.process():data: ' + data);
+        Util.log('DWSearchInstrument_Controller.process():data: ' + data);
         //Set debugging
         if (data.debug) {
             Util.debug = data.debug;
@@ -31,16 +31,21 @@ public with sharing class DWSearchInstrument_Controller  extends ETLC_ApexBridge
         try {
             Util.log('DWSearchInstrument_Controller.searchInstrument():symbol: ' + symbol);
             Util.log('DWSearchInstrument_Controller.searchInstrument():AccountID: ' + AccountID);
-            //Need to login to DriveWealth
-            //User "generic" username/password from Custom Settings
-            DriveWealthJsonSession sessionInfo = DriveWealth.doSetup(AccountID);
-            if(sessionInfo != null) {
-                retVal = DriveWealth.searchInstrument(symbol);
-                //Update new session Info from DriveWealth
-                DriveWealth.doCleanup();
+            //QUery account to confirm that it is correct account
+            Account acc = DataQuery.getAccount(AccountID);
 
-                Util.log('DWSearchInstrument_Controller.searchInstrument().retVal: ' + retVal);
+            if(acc != null){
+                //Need to login to DriveWealth
+                //User "generic" username/password from Custom Settings
+                //If we don't want to use generic username/password then we should error out in lightning component and not call this method
+                DriveWealthJsonSession sessionInfo = DriveWealth.doSetup(acc, true);
+                if(sessionInfo != null) {
+                    retVal = DriveWealth.searchInstrument(symbol);
+                    //Update new session Info from DriveWealth
+                    DriveWealth.doCleanup();
 
+                    Util.log('DWSearchInstrument_Controller.searchInstrument().retVal: ' + retVal);
+                }
             }
         }catch(Exception e){ Util.log('DWSearchInstrument_Controller.searchInstrument():Exception: ' + e.getMessage()); }
 

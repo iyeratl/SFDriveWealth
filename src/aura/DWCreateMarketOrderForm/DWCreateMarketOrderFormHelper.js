@@ -54,7 +54,7 @@
     submitOrder: function(component, helper) {
         if(helper.isValid(component, helper) && component.isValid()) {
 
-            component.find('utils').toggleSpinner(component.find('spinner'));
+            component.find('utils').toggleSpinner(component.find('spinner'), true);
 
             var apexBridge = component.find("ApexBridge");
             var instrument = component.get('v.instrument');
@@ -99,7 +99,7 @@
                     }
                     component.find('utils').createComponents(message, component.find('uiMessage'));
 
-                    component.find('utils').toggleSpinner(component.find('spinner'));
+                    component.find('utils').toggleSpinner(component.find('spinner'), false);
 
                 }
             });

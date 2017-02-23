@@ -6,23 +6,23 @@ global class HTTPMockResponse implements HttpCalloutMock {
         // Optionally, only send a mock response for a specific endpoint
         // and method.
 
-        if(req.getEndpoint() == 'http://api.drivewealth.io/v1/userSessions' && req.getMethod() == 'POST'){
+        if(req.getEndpoint() == 'https://api.drivewealth.io/v1/userSessions' && req.getMethod() == 'POST'){
             res = createSession();
-        }else if(req.getEndpoint() == 'http://api.drivewealth.io/v1/userSessionsINVALID' && req.getMethod() == 'POST'){
+        }else if(req.getEndpoint() == 'https://api.drivewealth.io/v1/userSessionsINVALID' && req.getMethod() == 'POST'){
             res = createSession_invalid();
-        }else if(req.getEndpoint() == 'http://api.drivewealth.io/v1/userSessions/sessionKey' && req.getMethod() == 'GET'){
+        }else if(req.getEndpoint() == 'https://api.drivewealth.io/v1/userSessions/sessionKey' && req.getMethod() == 'GET'){
             res = getSession();
-        }else if(req.getEndpoint() == 'http://api.drivewealth.io/v1/userSessions/sessionKeyINVALID' && req.getMethod() == 'GET'){
+        }else if(req.getEndpoint() == 'https://api.drivewealth.io/v1/userSessions/sessionKeyINVALID' && req.getMethod() == 'GET'){
             res = getSession_invalid();
-        }else if(req.getEndpoint() == 'http://api.drivewealth.io/v1/instruments?symbol=crm' && req.getMethod() == 'GET'){
+        }else if(req.getEndpoint() == 'https://api.drivewealth.io/v1/instruments?symbol=crm' && req.getMethod() == 'GET'){
             res = searchInstrument();
-        }else if(req.getEndpoint() == 'http://api.drivewealth.io/v1/instruments?symbol=crmINVALID' && req.getMethod() == 'GET'){
+        }else if(req.getEndpoint() == 'https://api.drivewealth.io/v1/instruments?symbol=crmINVALID' && req.getMethod() == 'GET'){
             res = searchInstrument_unauthorized();
-        }else if(req.getEndpoint() == 'http://api.drivewealth.io/v1/instruments?symbol=crmEMPTY' && req.getMethod() == 'GET'){
+        }else if(req.getEndpoint() == 'https://api.drivewealth.io/v1/instruments?symbol=crmEMPTY' && req.getMethod() == 'GET'){
             res = searchInstrument_empty();
-        }else if(req.getEndpoint() == 'http://api.drivewealth.io/v1/instruments?symbols=crm,AAPL' && req.getMethod() == 'GET'){
+        }else if(req.getEndpoint() == 'https://api.drivewealth.io/v1/instruments?symbols=crm,AAPL' && req.getMethod() == 'GET'){
             res = searchInstrument_multiple();
-        }else if(req.getEndpoint() == 'http://api.drivewealth.io/v1/signups/practice' && req.getMethod() == 'POST'){
+        }else if(req.getEndpoint() == 'https://api.drivewealth.io/v1/signups/practice' && req.getMethod() == 'POST'){
             //Need to mimic 401
             if(req.getHeader('x-mysolomeo-session-key') != null && req.getHeader('x-mysolomeo-session-key') == 'sessKey401'){
                 res = createPracticeAccount401();
@@ -30,9 +30,9 @@ global class HTTPMockResponse implements HttpCalloutMock {
             }else{
                 res = createPracticeAccount();
             }
-        }else if(req.getEndpoint() == 'http://api.drivewealth.io/v1/orders' && req.getMethod() == 'POST') {
+        }else if(req.getEndpoint() == 'https://api.drivewealth.io/v1/orders' && req.getMethod() == 'POST') {
             res = createMarketOrder_positive();
-        }else if(req.getEndpoint().startsWith('http://api.drivewealth.io/v1/orders/a') && req.getMethod() == 'GET') {
+        }else if(req.getEndpoint().startsWith('https://api.drivewealth.io/v1/orders/a') && req.getMethod() == 'GET') {
             //Using stasrtsWith because we don't know what will be the order ID
             res = getOrderStatus_positive();
         }
@@ -163,7 +163,7 @@ global class HTTPMockResponse implements HttpCalloutMock {
     }
     /**
      * getOrderStatus Mock Resonse
-     * http://api.drivewealth.io/v1/orders/ORDERID
+     * https://api.drivewealth.io/v1/orders/ORDERID
      */
 
     private static HTTPResponse getOrderStatus_positive(){

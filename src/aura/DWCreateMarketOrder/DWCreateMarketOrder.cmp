@@ -1,5 +1,5 @@
 <!-- Create Market Order in DriveWealth -->
-<aura:component controller="DWCreateOrder_Controller" implements="flexipage:availableForRecordHome,force:hasRecordId">
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId" access="global">
 
     <!-- debug Apex code -->
     <aura:attribute name="debug" type="Boolean" default="false" access="global"/>

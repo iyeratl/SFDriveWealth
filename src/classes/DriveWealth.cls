@@ -10,6 +10,9 @@ public with sharing class DriveWealth {
     //DriveWealth custom settings for DWW Endpoint (and maybe other) information
     private static DriveWealth__c dw = DriveWealth__c.getInstance() ;
 
+    //DriveWealth protected custom setting to store crypto key
+    private static DriveWealthP__c dwp = DriveWealthP__c.getOrgDefaults();
+
     /** Store account information for later user; if need */
     private static Account acc;
 
@@ -166,7 +169,7 @@ public with sharing class DriveWealth {
      * @param AccountID ID for account to get information
      */
 
-    private static void retrieveAccountInfo(String AccountID){
+    private static Account retrieveAccountInfo(String AccountID){
         try{
 
             //retrieve account information
@@ -188,6 +191,7 @@ public with sharing class DriveWealth {
         catch (SFDCAccessControlException e) {
             String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: ' + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: ' + e.getExceptionField() + ' Text: ' + e.getText();Util.log('DriveWealth.retrieveAccountInfo():Exception: ' + message);
         }catch(Exception e){ Util.log('DriveWealth.retrieveAccountInfo():Exception: ' + e.getMessage()); }
+        return acc;
     }
     /**
      * This is used to prepare information for login. We need Account ID as we need to get DriveWealth username/password and other information
@@ -200,7 +204,32 @@ public with sharing class DriveWealth {
      * @return DriveWealthJsonSession
      */
     public static DriveWealthJsonSession doSetup(String AccountID){
-        return doSetup(AccountID, dw.Username__c, dw.Password__c, dw.User_ID__c);
+        retrieveAccountInfo(AccountID);
+        return doSetup(acc);
+    }
+
+    /**
+     * Sometimes, like when searching symbols, we might want to use orgwide credentials rather than account credentials
+     * BUT, this will only happen if account credentials do not exist
+     * Otherise, continue to use account credentials
+     */
+    public static DriveWealthJsonSession doSetup(Account a, Boolean useOrgWideCredentials) {
+        //If account doesn't have Username OR Password OR DW User ID then use org wide
+        if(String.isEmpty(a.DW_Username__c) || String.isEmpty(a.DW_Password__c) || String.isEmpty(a.DW_User_ID__c)){
+            Util.log('DriveWealth.doSetup():Using OrgWideCredentials');
+            return doSetup(a, dw.Username__c, dw.Password__c, dw.User_ID__c);
+        }else{
+            Util.log('DriveWealth.doSetup():Using Account Credentials');
+            return doSetup(a);
+        }
+    }
+    /**
+     * Use Account credentials on it's own
+     */
+    public static DriveWealthJsonSession doSetup(Account a){
+
+        //username/password are encrypted. Now decrypt those here so we can use those for login
+        return doSetup(a, decryptString(a.DW_Username__c), decryptString(a.DW_Password__c), a.DW_User_ID__c);
     }
     /**
      * Same as doSetup but this one takes explicit username/password in case we need to supply it directly and not from Account
@@ -212,43 +241,27 @@ public with sharing class DriveWealth {
      * @param Password DW Password to login
      * @param DWUserID User ID for DriveWealth
      */
-    public static DriveWealthJsonSession doSetup(String AccountID, String Username, String Password, String DWUserId){
+//    public static DriveWealthJsonSession doSetup(String AccountID, String Username, String Password, String DWUserId){
+    public static DriveWealthJsonSession doSetup(Account a, String DWUsername, String DWPassword, String DWUserID){
         try {
-            Util.log('DriveWealth:init():doSetup:AccountID: ' + AccountID);
-
-            //If username, password and user ID have been provided then no need to search
-            //Just set those directly
-            if(String.isNotEmpty(Username) && String.isNotEmpty(Password) && String.isNotEmpty(DWUserId)){
-                acc = new Account();
-                acc.Id = AccountID;
-                acc.DW_Username__c = Username;
-                acc.DW_Password__c = Password;
-                acc.DW_User_ID__c = DWUserId;
-
-                Util.log('DriveWealth:init():doSetup:acc: ' + acc);
-            }else{
-                retrieveAccountInfo(AccountID);
-            }
-
+            Util.log('DriveWealth:init():doSetup:a: ' + a);
+            acc = a;
 
             if(acc != null) {
                 //Retrieve session information from object if it's there
-                retrieveDWSessionInfo(AccountId, acc.DW_User_ID__c);
-                Util.log('DriveWealth:init():retrieveDWSessionInfo:dws: ' + dws);
+                retrieveDWSessionInfo(acc.Id, DWUserID);
+                Util.log('DriveWealth:doSetup():retrieveDWSessionInfo:dws: ' + dws);
 
                 if(dws != null) {
-                    Username =  (Username == null)?acc.DW_Username__c:Username;
-                    Password =  (Password == null)?acc.DW_Password__c:Password;
-
                     //Login to make sure session is valid
-                    sessionInfo = login(username, password);
-                    Util.log('DriveWealth:init():login:retValue: ' + sessionInfo);
+                    sessionInfo = login(DWUsername, DWPassword);
+                    Util.log('DriveWealth:init():doSetup:retValue: ' + sessionInfo);
                 }
             }
-        }catch(Exception e){ Util.log('DriveWealth.login(AccountID):Exception: ' + e.getMessage()); }
+        }catch(Exception e){ Util.log('DriveWealth.doSetup(AccountID):Exception: ' + e.getMessage()); }
         return sessionInfo;
     }
-    /**
+    /** 
      * This is to update session information. But we need to do it AFTER the callouts otherwise we will get following error
      *
      *
@@ -447,4 +460,44 @@ public with sharing class DriveWealth {
     }
 
 
+    /**
+     * Encrypt username/password
+     */
+    public static string encryptString(String stringToEncrypt){
+        if(String.isBlank(stringToEncrypt)){
+            return '';
+        }
+        Blob key = Blob.valueOf(DriveWealth.getCryptoKey());
+        Blob encryptedValue = Crypto.encryptWithManagedIV('AES256', key, Blob.valueOf(stringToEncrypt));
+        String encryptedString = EncodingUtil.base64encode(encryptedValue);
+
+        return encryptedString;
+    }
+    /**
+     * Decrypt username/password
+     */
+    public static string decryptString(String stringToDecrypt){
+        if(String.isBlank(stringToDecrypt)){
+            return '';
+        }
+        Blob key = Blob.valueOf(DriveWealth.getCryptoKey());
+        Blob base64 = EncodingUtil.base64decode(stringToDecrypt);
+        Blob decryptedValue = Crypto.decryptWithManagedIV('AES256', key, base64);
+        String decryptedString = decryptedValue.toString();
+
+        return decryptedString;
+        //return  Crypto.decryptWithManagedIV('AES128', getCryptoKey(), stringToDecrypt);
+    }
+    /**
+     * Generate 32 letter crypto key for AES256
+     */
+    public static String getCryptoKey(){
+        //If string is empty then it might be the first time and we need to generate the key
+        if(String.isBlank(dwp.Crypto_Key__c)){
+            String key = EncodingUtil.convertToHex(crypto.generateAesKey(256));
+            dwp.Crypto_Key__c = key.substring(0, 32);
+            upsert dwp;
+        }
+        return dwp.Crypto_Key__c;
+    }
 }

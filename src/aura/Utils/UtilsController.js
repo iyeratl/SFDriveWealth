@@ -67,13 +67,10 @@
         var params = event.getParam('arguments');
         if (params) {
             var spinner = params.spinnerComponent;
-
+            var isVisible = params.isVisible;
             var evt = spinner.get("e.toggle");
-            if(!$A.util.hasClass(spinner, 'hideEl')) {
-                evt.setParams({isVisible: false});
-            }else {
-                evt.setParams({ isVisible : true });
-            }
+
+            evt.setParams({'isVisible': isVisible});
             evt.fire();
 
         }
