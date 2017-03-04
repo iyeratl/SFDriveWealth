@@ -63,7 +63,7 @@ public with sharing class DWOrderList_Controller extends ETLC_ApexBridge_Abstrac
 
             //Chek for Order
             //Need to update status after fetching
-            Boolean hasDWOrderUpdatePermission = Util.AccessController.isAuthorizedToUpdate(
+            Util.AccessController.assertAuthorizedToUpdate(
                     Schema.DW_Order__c.getSobjectType(),
                     new List<Schema.SobjectField>{
                             Schema.DW_Order__c.fields.Order_Status__c, Schema.DW_Order__c.fields.Executed_When__c

@@ -78,7 +78,7 @@ public with sharing class DWCreateOrder_Controller  extends ETLC_ApexBridge_Abst
         try {
 
             //CRUD/FLS check
-            Boolean hasAccountViewPermission = Util.AccessController.isAuthorizedToCreate(
+            Util.AccessController.assertAuthorizedToCreate(
                     Schema.DW_Order__c.getSobjectType(),
                     new List<Schema.SobjectField>{
                             Schema.DW_Order__c.fields.Comment__c, Schema.DW_Order__c.fields.DW_Account__c,

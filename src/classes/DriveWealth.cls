@@ -42,7 +42,7 @@ public with sharing class DriveWealth {
     private static DW_Session__C retrieveDWSessionInfo(String AccountID, String DWUserID){
         try{
             //CRUD/FLS check
-            Boolean hasAccountViewPermission = Util.AccessController.isAuthorizedToView(
+            Util.AccessController.assertAuthorizedToView(
                     Schema.DW_Session__C.getSobjectType(),
                     new List<Schema.SobjectField>{
                             Schema.DW_Session__C.fields.Name, Schema.DW_Session__C.fields.Account__c,
@@ -98,7 +98,7 @@ public with sharing class DriveWealth {
         try{
 
             //CRUD/FLS check
-            Boolean hasAccountCreatePermission = Util.AccessController.isAuthorizedToCreate(
+            Util.AccessController.assertAuthorizedToCreate(
                     Schema.DW_Session__C.getSobjectType(),
                     new List<Schema.SobjectField>{
                             Schema.DW_Session__C.fields.Name, Schema.DW_Session__C.fields.Account__c,
@@ -106,7 +106,7 @@ public with sharing class DriveWealth {
                             Schema.DW_Session__C.fields.Active__c
                     }
             );
-            Boolean hasAccountUpdatePermission = Util.AccessController.isAuthorizedToUpdate(
+            Util.AccessController.assertAuthorizedToUpdate(
                     Schema.DW_Session__C.getSobjectType(),
                     new List<Schema.SobjectField>{
                             Schema.DW_Session__C.fields.Name, Schema.DW_Session__C.fields.Account__c,
@@ -175,7 +175,7 @@ public with sharing class DriveWealth {
             //retrieve account information
             if(acc == null){
                 //CRUD/FLS check
-                Boolean hasAccountViewPermission = Util.AccessController.isAuthorizedToView(Schema.Account.getSobjectType(),
+                Util.AccessController.assertAuthorizedToView(Schema.Account.getSobjectType(),
                         new List<Schema.SobjectField>{
                                 Schema.Account.fields.Name, Schema.Account.fields.DW_Username__c,
                                 Schema.Account.fields.DW_Password__c, Schema.Account.fields.DW_User_ID__c

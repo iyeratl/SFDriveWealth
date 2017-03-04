@@ -21,7 +21,7 @@ public with sharing class DataQuery {
     public static Account getAccount(Id AccountId){
 
         //CRUD/FLS check
-        Boolean hasAccountViewPermission = Util.AccessController.isAuthorizedToView(
+        Util.AccessController.assertAuthorizedToView(
             Schema.Account.getSobjectType(),
             new List<Schema.SobjectField>{
                     Schema.Account.fields.Name, Schema.Account.fields.DW_Username__c,
@@ -30,7 +30,7 @@ public with sharing class DataQuery {
             }
         );
 
-        Boolean hasDWAccountViewPermission = Util.AccessController.isAuthorizedToView(
+        Util.AccessController.assertAuthorizedToView(
                 Schema.DW_Account__c.getSobjectType(),
                 new List<Schema.SobjectField>{
                         Schema.DW_Account__c.fields.Name
@@ -59,7 +59,7 @@ public with sharing class DataQuery {
 
         //CRUD/FLS check
         //Chek for DW Account
-        Boolean hasDWAccountViewPermission = Util.AccessController.isAuthorizedToView(
+        Util.AccessController.assertAuthorizedToView(
                 Schema.DW_Account__c.getSobjectType(),
                 new List<Schema.SobjectField>{
                         Schema.DW_Account__c.fields.Name, Schema.DW_Account__c.fields.Account__c,
@@ -68,7 +68,7 @@ public with sharing class DataQuery {
                 }
         );
         //Check for account as we also need it for that
-        Boolean hasAccountViewPermission = Util.AccessController.isAuthorizedToView(
+        Util.AccessController.assertAuthorizedToView(
                 Schema.Account.getSobjectType(),
                 new List<Schema.SobjectField>{
                         Schema.Account.fields.Name, Schema.Account.fields.DW_User_ID__c,
@@ -87,7 +87,7 @@ public with sharing class DataQuery {
     public static  Map<Id, DW_Order__c> getOrders(Id AccountID) {
         //CRUD/FLS check
         //Chek for DW Account
-        Boolean hasDWAccountViewPermission = Util.AccessController.isAuthorizedToView(
+        Util.AccessController.assertAuthorizedToView(
                 Schema.DW_Account__c.getSobjectType(),
                 new List<Schema.SobjectField>{
                         Schema.DW_Account__c.fields.Name
@@ -95,7 +95,7 @@ public with sharing class DataQuery {
         );
 
         //Chek for Order
-        Boolean hasDWOrderViewPermission = Util.AccessController.isAuthorizedToView(
+        Util.AccessController.assertAuthorizedToView(
                 Schema.DW_Order__c.getSobjectType(),
                 new List<Schema.SobjectField>{
                         Schema.DW_Order__c.fields.DW_Account__c, Schema.DW_Order__c.fields.Instrument_Name__c,
@@ -122,7 +122,7 @@ public with sharing class DataQuery {
     public static  DW_Order__c getOrder(Id OrderID) {
 
         //Chek for Order
-        Boolean hasDWAccountViewPermission = Util.AccessController.isAuthorizedToView(
+        Util.AccessController.assertAuthorizedToView(
                 Schema.DW_Order__c.getSobjectType(),
                 new List<Schema.SobjectField>{
                         Schema.DW_Order__c.fields.Name
