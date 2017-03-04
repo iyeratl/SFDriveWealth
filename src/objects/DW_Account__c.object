@@ -142,4 +142,5 @@
     <pluralLabel>DW Accounts</pluralLabel>
     <searchLayouts/>
     <sharingModel>ControlledByParent</sharingModel>
+    <visibility>Public</visibility>
 </CustomObject>

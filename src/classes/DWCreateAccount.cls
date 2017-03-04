@@ -1,5 +1,57 @@
-public with sharing class DWCreateAccount {
+public with sharing class DWCreateAccount  extends ETLC_ApexBridge_Abstract {
+
+    /**
+     * Method implementation for method in abstract class ETLC_ApexBridge_Abstract
+     *
+     * This is where we will process user input and decide which functions to call and return required output
+     *
+     * @param ETLC_ApexBridge_Data Data sent by lightning component
+     */
+    public override void process(ETLC_ApexBridge_Data data) {
+        //Set debugging
+        if (data.debug) {
+            Util.debug = data.debug;
+        }
+
+        // Depending on the mode, determine which operation to perform
+
+        String mode = (String) data.getInputValue('mode');
+        if (mode == 'getAccount') {
+            data.output = ETLC_ApexBridge_Data.encodeData(getAccount((Id) data.getInputValue('AccountID')));
+        } else if (mode == 'createAccount') {
+            Util.log('DWCreateAccount.process():data: ' + data);
+            Util.log(data.getInputValue('acc'));
+            data.output = ETLC_ApexBridge_Data.encodeData(
+                    createAccount( (Account) data.getInputValue('acc'),
+                            (String)  data.getInputValue('FirstName'),
+                            (String)  data.getInputValue('LastName'),
+                            (String)  data.getInputValue('UserName'),
+                            (String)  data.getInputValue('Password')
+
+                    )
+            );
+        }
+    }
+
+    public Account createAccount(Account acc, String fname, String lname, String uname, String passwd)
+    {
+        Util.log('DWCreateAccount.process():data: ' + acc);
+        Util.log('DWCreateAccount.process():data: ' + uname);
+        Util.log('DWCreateAccount.process():data: ' + lname);
+        Util.log('DWCreateAccount.process():data: ' + passwd);
+        Util.log('DWCreateAccount.process():data: ' + fname);
+        Account a = new Account();
+        return a;
+
+    }
+    public Account getAccount(ID acctid){
+
+        Account a = new Account();
+        return a;
+    }
+
     public DWCreateAccount() {
+        /*
     //Set this if you need to see debug statements
             Util.debug = true;
 
@@ -7,7 +59,9 @@ public with sharing class DWCreateAccount {
             //Then create new Practice account
             //Hint: Use SOQL or initial data load to get this informaiton in, say, Lightning Component
             String AccountID = '00141000007RP8w';
-            Account a = DataQuery.getAccount(AccountId);
+            Account a = [select Id, AccountNumber, DW_Username__c, DW_Password__c, DW_Total_Practice_Accounts__c
+                            from account
+                            where id=:AccountId];
 
             //If no DW Accounts then create one
             if(a.DW_Total_Practice_Accounts__c <= 0 ){
@@ -33,7 +87,7 @@ public with sharing class DWCreateAccount {
                 DriveWealthJsonAccount aInfo = DriveWealth.createPracticeAccount(data);
 
                 //Now login with new username/password to start session and get account info
-                DriveWealthJsonSession sessionInfo = DriveWealth.doSetup(a);
+                DriveWealthJsonSession sessionInfo = DriveWealth.doSetup(a.Id, dw.Username__c, dw.Password__c, dw.User_ID__c);
 
 
                 //userID as returned after creating user
@@ -82,6 +136,7 @@ public with sharing class DWCreateAccount {
                                                 where Account__r.Id=:AccountID];
             //listDWAcc can be returned for use
             System.debug(listDWAcc);
+            */
         
     }
 }

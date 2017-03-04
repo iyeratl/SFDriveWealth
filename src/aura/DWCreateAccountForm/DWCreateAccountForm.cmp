@@ -1,3 +1,98 @@
-<aura:component >
-	
+<aura:component description="DWCreateAccountForm" controller="DWCreateAccount">
+
+    <!-- Workaround for strange bug where related records are not loaded the first time -->
+    <!-- https://org62.lightning.force.com/one/one.app#/sObject/0D50M000032hJOwSAM/view-->
+    <aura:attribute type="Object" name="acc" access="public"/>
+    <!-- Workaround  -->
+
+    <!-- Instrument information for order -->
+    <!-- <aura:attribute name="instrument" type="DriveWealthJsonInstrument" access="public" />
+    -->
+
+    <!-- debug Apex code -->
+    <aura:attribute name="debug" type="Boolean" default="false" access="public"/>
+    <aura:attribute name="debugClient" type="Boolean" default="false" access="public" />
+
+
+    <!-- Store account if it was successfully created -->
+    <!-- this may not been needed
+    <aura:attribute name="account" type="DriveWealthJsonAccount"  /> -->
+
+    <!-- For using ApexBridge Library -->
+    <!-- VI - utility for making apex controller calls from LC-->
+    <c:ETLC_ApexBridge aura:id="ApexBridge" debugServer="{!v.debug}" debugClient="{!v.debugClient}"/>
+
+    <!-- For using Utils library -->
+    <!-- VI - used to display error messages in the component - also used for logging/messaging -->
+    <c:Utils debugClient="{!v.debugClient}" aura:id="utils"  />
+
+
+
+    <!--Setup initial information for creating a market order
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+-->
+
+    <aura:registerEvent name="appEvent" type="c:EvtAccountCreated"  />
+
+
+    <!-- ui:message will added in this div via createComponents() -->
+    <div aura:id="uiMessage"></div>
+
+    <ui:spinner aura:id="spinner" isVisible="false"/>
+
+<!--
+    <aura:attribute name="emailAddress1" type="String" default="" />
+    <aura:attribute name="firstName" type="String" default="" />
+    <aura:attribute name="lastName" type="String" default="" />
+    <aura:attribute name="userName" type="String" default="" />
+    <aura:attribute name="password" type="String" default="" />
+    <aura:attribute name="referralCode" type="String" default="" />
+  -->
+    <aura:attribute name="fname" type="String" default="" />
+    <aura:attribute name="lname" type="String" default="" />
+    <aura:attribute name="uname" type="String" default="" />
+    <aura:attribute name="passwd" type="String" default="" />
+
+
+    <!-- Input Form using components -->
+    <div  class="slds-box slds-theme--default" aura:id="createAccountForm">
+        <div class="slds-form-element">
+            <lightning:input required="true" label="First Name" aura:id="fname" name="fname" type="text" value="{!v.fname}" />
+
+        </div>
+
+        <div class="slds-form-element slds-is-required">
+            <div class="slds-form-element__control">
+                <lightning:input required="true" label="Last Name" aura:id="lname" name="lname" type="text" value="{!v.lname}"/>
+
+
+            </div>
+        </div>
+
+        <div class="slds-form-element slds-is-required">
+            <div class="slds-form-element__control">
+                <label class="slds-form-element__label" >Email</label>
+                <div class="slds-form-element__control">
+                    <ui:outputText value="{!v.acc.Email}" />
+                </div>
+            </div>
+        </div>
+        <div class="slds-form-element">
+            <lightning:input required="true" label="User Name" aura:id="uname" name="uname" type="text" value="{!v.uname}" />
+
+        </div>
+
+        <div class="slds-form-element slds-is-required">
+            <div class="slds-form-element__control">
+                <lightning:input required="true" label="Password" aura:id="passwd" name="passwd" type="text" value="{!v.passwd}"/>
+
+
+            </div>
+        </div>
+        <div class="slds-form-element">
+            <lightning:button label="Create Account" onclick="{!c.createAccount}" />
+        </div>
+    </div><!-- ./container-->
+
+
 </aura:component>

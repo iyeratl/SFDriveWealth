@@ -135,6 +135,17 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Instrument_Symbol__c</fullName>
+        <externalId>false</externalId>
+        <label>Instrument Symbol</label>
+        <length>20</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Order_ID__c</fullName>
         <externalId>true</externalId>
         <label>Order ID</label>
@@ -174,22 +185,27 @@
                 <value>
                     <fullName>New</fullName>
                     <default>true</default>
+                    <label>New</label>
                 </value>
                 <value>
                     <fullName>Fill</fullName>
                     <default>false</default>
+                    <label>Fill</label>
                 </value>
                 <value>
                     <fullName>Canceled</fullName>
                     <default>false</default>
+                    <label>Canceled</label>
                 </value>
                 <value>
                     <fullName>Rejected</fullName>
                     <default>false</default>
+                    <label>Rejected</label>
                 </value>
                 <value>
                     <fullName>Partial Fill</fullName>
                     <default>false</default>
+                    <label>Partial Fill</label>
                 </value>
             </valueSetDefinition>
         </valueSet>
@@ -209,6 +225,7 @@
                 <value>
                     <fullName>Market Order</fullName>
                     <default>false</default>
+                    <label>Market Order</label>
                 </value>
             </valueSetDefinition>
         </valueSet>
@@ -228,10 +245,12 @@
                 <value>
                     <fullName>Buy</fullName>
                     <default>false</default>
+                    <label>Buy</label>
                 </value>
                 <value>
                     <fullName>Sell</fullName>
                     <default>false</default>
+                    <label>Sell</label>
                 </value>
             </valueSetDefinition>
         </valueSet>
@@ -251,4 +270,5 @@
     <pluralLabel>DW Orders</pluralLabel>
     <searchLayouts/>
     <sharingModel>ControlledByParent</sharingModel>
+    <visibility>Public</visibility>
 </CustomObject>

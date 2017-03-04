@@ -5,7 +5,7 @@ private class DWOrderList_Controller_Test {
     private static void doSetup(){ 
         //Need for API calls
         DriveWealth__c dw = new DriveWealth__c();
-        dw.endpoint__c = 'https://api.drivewealth.io/v1/';
+        dw.endpoint__c = 'https://api.drivewealth.io/v1/'; 
         insert dw;
 
         Account a = new Account();

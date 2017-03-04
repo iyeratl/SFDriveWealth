@@ -3,7 +3,7 @@ private class DWCreateOrder_Controller_Test {
     @testSetup
     private static void dataSetup(){
         DriveWealth__c dw = new DriveWealth__c();
-        dw.endpoint__c = 'https://api.drivewealth.io/v1/';
+        dw.endpoint__c = 'https://api.drivewealth.io/v1/'; 
         insert dw;
 
         List<DW_Account__c> dwAccountList = new List<DW_Account__c>();

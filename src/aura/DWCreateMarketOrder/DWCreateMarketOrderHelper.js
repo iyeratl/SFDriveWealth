@@ -12,7 +12,6 @@
             },
             callBackMethod: function (data) {
                 var acc = data.output;
-                component.set('v.acc', acc);
 
                 var noAccountMsg = component.find('noAccountMsg');
                 if($A.util.isUndefined(acc.sfaip_fsc_dw__DW_Accounts__r)){
@@ -21,6 +20,9 @@
                 }else{
                     $A.util.addClass(noAccountMsg, 'slds-hide');
                     $A.util.removeClass(noAccountMsg, 'slds-show');
+
+
+                    component.set('v.acc', acc);
 
                     //Show Search Symbol Form
                     helper.showSearchSymbolForm(component, helper);

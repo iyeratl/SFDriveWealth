@@ -145,7 +145,7 @@ global class HTTPMockResponse implements HttpCalloutMock {
     private static HTTPResponse createPracticeAccount401(){
         HttpResponse res = new HttpResponse();
         res.setHeader('Content-Type', 'application/json');
-        res.setBody('{"code": "401","message": "Invalid x-mysolomeo-session-key HTTP header [ipAddress=1.1.1.1]"}');
+        res.setBody('{"code": "401","message": "Invalid x-mysolomeo-session-key HTTP header [ipAddress=1.1.1.1]"}'); 
         res.setStatusCode(401);
         return res;
     }

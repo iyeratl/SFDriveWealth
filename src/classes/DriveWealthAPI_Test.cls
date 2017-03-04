@@ -152,7 +152,7 @@ private class DriveWealthAPI_Test {
         DriveWealth__c dw = DriveWealth__c.getInstance();
         System.assert(dw != null);
 
-        String endpoint = 'https://api.drivewealth.io/v1/userSessionsINVALID';
+        String endpoint = 'https://api.drivewealth.io/v1/userSessionsINVALID'; 
         Test.setMock(HTTPCalloutMock.class, new HTTPMockResponse());
 
         Account acc = [SELECT Id, DW_Username__c, DW_Password__C from Account where name='Account A0' limit 1];
