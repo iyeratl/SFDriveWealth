@@ -22,121 +22,136 @@ public with sharing class DWCreateAccount  extends ETLC_ApexBridge_Abstract {
             Util.log('DWCreateAccount.process():data: ' + data);
             Util.log(data.getInputValue('acc'));
             data.output = ETLC_ApexBridge_Data.encodeData(
-                    createAccount( (Account) data.getInputValue('acc'),
+                    createAccount( data,
+                            (Map<String, Object>) data.getInputValue('acc'),
                             (String)  data.getInputValue('FirstName'),
                             (String)  data.getInputValue('LastName'),
                             (String)  data.getInputValue('UserName'),
                             (String)  data.getInputValue('Password')
-
                     )
             );
         }
     }
-
-    public Account createAccount(Account acc, String fname, String lname, String uname, String passwd)
+// VI - what is this doing - why are we passing the parameters here if it is not using anything for create account ?
+    public Account createAccount(ETLC_ApexBridge_Data data, Map<String, Object> acc, String fname, String lname, String uname, String passwd)
     {
-        Util.log('DWCreateAccount.process():data: ' + acc);
-        Util.log('DWCreateAccount.process():data: ' + uname);
-        Util.log('DWCreateAccount.process():data: ' + lname);
-        Util.log('DWCreateAccount.process():data: ' + passwd);
-        Util.log('DWCreateAccount.process():data: ' + fname);
+        Util.log('DWCreateAccount.createAccount():data: ' + acc);
+        Util.log('DWCreateAccount.createAccount():data: ' + uname);
+        Util.log('DWCreateAccount.createAccount():data: ' + lname);
+        Util.log('DWCreateAccount.createAccount():data: ' + passwd);
+        Util.log('DWCreateAccount.createAccount():data: ' + fname);
+      //  Util.log('DWCreateAccount.process():data: ' + acc.email__c);
         Account a = new Account();
-        return a;
+        Account retval= new Account();
+        try {
 
-    }
-    public Account getAccount(ID acctid){
-
-        Account a = new Account();
-        return a;
-    }
-
-    public DWCreateAccount() {
-        /*
-    //Set this if you need to see debug statements
-            Util.debug = true;
-
-            //If there is no DW User ID" AND/OR "DW Account ID" associate with (standard) Account
-            //Then create new Practice account
-            //Hint: Use SOQL or initial data load to get this informaiton in, say, Lightning Component
-            String AccountID = '00141000007RP8w';
-            Account a = [select Id, AccountNumber, DW_Username__c, DW_Password__c, DW_Total_Practice_Accounts__c
-                            from account
-                            where id=:AccountId];
-
-            //If no DW Accounts then create one
-            if(a.DW_Total_Practice_Accounts__c <= 0 ){
-                //Custom setting to get "referralCode" needed to create account
+            // a = DataQuery.getAccount(acc.Id);
+            a = DataQuery.getAccount((Id)acc.get('Id'));
+            if (a != null) {
+                //getting DW custom settings - which has the orgwide user/pass
                 DriveWealth__c dw = DriveWealth__c.getInstance() ;
 
-                String username = a.AccountNumber; //'sfusername';
-                String password = a.AccountNumber; //'sfpassword';
+
+                // String username = a.AccountNumber; //'sfusername';
+                //  String password = a.AccountNumber; //'sfpassword';
+
 
                 //Data for Practice Account Creation
-                Map<String, String> data = new Map<String, String> ();
-                data.put('emailAddress1', 'test@test.com2');//Pull from Account
-                data.put('firstName', 'FirstName 2');//Pull from Account
-                data.put('lastName', 'LastName 2');//Pull from Account
-                data.put('referralCode', dw.Referral_Code__c);
-                //If new account then provide username/password
-                data.put('username', username);
-                data.put('password', password);
+                Map<String, String> dataDW = new Map<String, String>();
 
-                System.debug(data);
+                dataDW.put('emailAddress1', (String) a.email__c);//Pull from Account
+                dataDW.put('firstName', fname);//Pull from Account
+                dataDW.put('lastName', lname);//Pull from Account
+                dataDW.put('referralCode', dw.Referral_Code__c);
+                //If new account then provide username/password
+                dataDW.put('username', uname);
+                dataDW.put('password', passwd);
+
+
+                Util.log('DWCreateAccount.createAccount():dataDW: ' + dataDW);
+
+
 
                 //There is no setup because we want to use new username info for login
-                DriveWealthJsonAccount aInfo = DriveWealth.createPracticeAccount(data);
+                DriveWealthJsonAccount aInfo = DriveWealth.createPracticeAccount(dataDW);
 
-                //Now login with new username/password to start session and get account info
-                DriveWealthJsonSession sessionInfo = DriveWealth.doSetup(a.Id, dw.Username__c, dw.Password__c, dw.User_ID__c);
-
-
-                //userID as returned after creating user
-                String DWUserID = aInfo.userID;
-
-                //Update account with new userID and username and password
-                a.DW_Username__c = username;
-                a.DW_Password__c = password;
-                a.DW_User_ID__c = sessionInfo.userID;
-
-                //Update account with new username, password and user I
-                update a;
+                if (aInfo.code==null) {
 
 
-                //Go through entire list of accounts returned for that user and update the list
-                //This will return newly created account if user is new.
-                //But will also return account for old user
-                List<DW_Account__c> listAcc = new List<DW_Account__c>();
-                for(Integer i=0; i<sessionInfo.Accounts.size(); i++){
-                    DW_Account__c acc = new DW_Account__c();
-                    acc.name = sessionInfo.Accounts[i].nickname;
-                    acc.Account__c = a.Id;
-                    acc.Account_ID__c = sessionInfo.Accounts[i].accountID;
-                    acc.Account_No__c = sessionInfo.Accounts[i].accountNo;
-                    acc.Account_Type__c = sessionInfo.Accounts[i].accountType;
-                    acc.Created_When__c = sessionInfo.Accounts[i].createdWhen;
-                    acc.Opened_When__c = sessionInfo.Accounts[i].openedWhen;
+                    //Update account with new userID and username and password
+                    a.DW_Username__c = uname;
+                    a.DW_Password__c = passwd;
+                    a.DW_User_ID__c = aInfo.userID;
 
-                    listAcc.add(acc);
+                    //Now login with new username/password to start session and get account info
+                    //Provide string directly because we can't do DML beore callout; Because of that trigger hasn't run so we don't have encrypted account credentials
+                    //Even if we do DML before this, to get encrypted data we will need to do SOQL again
+                    DriveWealthJsonSession sessionInfo = DriveWealth.doSetup(a, a.DW_Username__c, a.DW_Password__c, a.DW_User_ID__c);
+
+
+                    //Just confirm to be sure that session was established
+                    if(sessionInfo != null && sessionInfo.code == null) {
+                        //Update main account object with new username, password and user I
+                        //Do DML after doSetup as we cannot callout AFTER DML
+                        update a;
+
+
+                        //Go through entire list of accounts returned for that user and update the list
+                        //This will return newly created account if user is new.
+                        //But will also return account for old user
+                        List<DW_Account__c> listAcc = new List<DW_Account__c>();
+                        for (Integer i = 0; i < sessionInfo.Accounts.size(); i++) {
+                            DW_Account__c dwacc = new DW_Account__c();
+                            dwacc.name = sessionInfo.Accounts[i].nickname;
+                            dwacc.Account__c = a.Id;
+                            dwacc.Account_ID__c = sessionInfo.Accounts[i].accountID; //accountId = Drivewealth Account Id when it was opened
+                            dwacc.Account_No__c = sessionInfo.Accounts[i].accountNo;
+                            dwacc.Account_Type__c = sessionInfo.Accounts[i].accountType;
+                            dwacc.Created_When__c = sessionInfo.Accounts[i].createdWhen;
+                            dwacc.Opened_When__c = sessionInfo.Accounts[i].openedWhen;
+
+                            listAcc.add(dwacc);
+                        }
+                        //Upsert all accounts using Account_ID__c as External key so that it's unique
+                        upsert listAcc Account_ID__c;
+                        Util.log(listAcc);
+
+                        //Update new session Info from DriveWealth
+                        DriveWealth.doCleanup();
+
+                        retval = DataQuery.getAccount(a.Id);
+                        Util.log(retval);
+                    }else{
+
+                        data.addMessage(ETLC_ApexBridge_Data.MessageType.Errors, 'DriveWealth Login Error: ' + sessionInfo.code + ': ' + sessionInfo.message);
+                    }
+
+                }else {// end of if
+                    data.addMessage(ETLC_ApexBridge_Data.MessageType.Errors, 'DriveWealth CreateAccount Error: ' + aInfo.code + ': ' + aInfo.message);
                 }
-                //Upsert all accounts using Account_ID__c as External key so that it's unique
-                upsert listAcc Account_ID__c;
-                System.debug(listAcc);
 
-                //Update new session Info from DriveWealth
-                DriveWealth.doCleanup();
 
             }else{
-
+                data.addMessage(ETLC_ApexBridge_Data.MessageType.Errors, 'Couldn\'t find account with ID ' + acc.get('Id'));
             }
+        }catch (SFDCAccessControlException e) {
+            String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: ' + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: ' + e.getExceptionField() + ' Text: ' + e.getText();Util.log('DWCreateOrder_Controller.getDWAccountList():SFDCAccessControlException: ' + message);
+        }catch(Exception e){ Util.log('DWCreateAccount.CreateAccount():Exception: ' + e.getMessage()); }
 
-
-            List<DW_Account__c> listDWAcc = [select Account_ID__c, Account__r.Id,
-                                                    Account__r.AccountNumber, Account__r.DW_User_ID__c
-                                                from DW_Account__c
-                                                where Account__r.Id=:AccountID];
-            //listDWAcc can be returned for use
-            System.debug(listDWAcc);
-            */
-        
+        return retVal;
     }
-}
+
+
+    public Account getAccount(ID AccountId){
+
+        Account retValue;
+        try{
+            retValue = DataQuery.getAccount(AccountId);
+            Util.log('DWCreateAccount.retrieveDriveWealthSessionInfo():retValue: ' + retValue);
+        }catch (SFDCAccessControlException e) {
+            String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: ' + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: ' + e.getExceptionField() + ' Text: ' + e.getText();Util.log('DWCreateOrder_Controller.getDWAccountList():SFDCAccessControlException: ' + message);
+        }catch(Exception e){ Util.log('DWCreateAccount.getAccount():Exception: ' + e.getMessage()); }
+        return retValue;
+    }
+
+    }

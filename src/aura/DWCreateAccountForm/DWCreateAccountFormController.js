@@ -4,5 +4,9 @@
 ({
     createAccount: function(component, event, helper) {
         helper.createAccount(component, helper);
+    },
+    doInit : function(component, event, helper) {
+        helper.getAccountInfo(component, helper);
+        /**/
     }
 })

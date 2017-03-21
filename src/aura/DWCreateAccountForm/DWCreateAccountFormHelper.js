@@ -6,40 +6,48 @@
         var lname = component.get('v.lname');
         var uname= component.get('v.uname');
         var passwd = component.get('v.passwd');
-
-
+        var email = component.get('v.acc').sfaip_fsc_dw__Email__c;
 
         //If account is not selected then show an error
             if($A.util.isEmpty(fname)) {
             message.push(
-                ["ui:message", {
+                ["markup://ui:message", {
                     'severity': 'error',
                     'body': 'Please select an First Name'
                 }]
             );
         }
 
-        if(lname ==''){
+        if($A.util.isEmpty(email)){
             message.push(
-                ["ui:message", {
+                ["markup://ui:message", {
+                    'severity': 'error',
+                    'body': 'Please make sure that this account has an email address'
+                }]
+            );
+        }
+
+        if($A.util.isEmpty(lname)){
+            message.push(
+                ["markup://ui:message", {
                     'severity': 'error',
                     'body': 'Please select an Last Name'
                 }]
             );
         }
-        if(uname==''){
+        if($A.util.isEmpty(uname)){
             message.push(
-                ["ui:message", {
+                ["markup://ui:message", {
                     'severity': 'error',
                     'body': 'Please select an User Name'
                 }]
             );
         }
-        if( passwd == ''){
+        if($A.util.isEmpty(passwd) || passwd.length<=8 || passwd.length>=90){
             message.push(
-                ["ui:message", {
+                ["markup://ui:message", {
                     'severity': 'error',
-                    'body': 'Please select a Password'
+                    'body': 'Password must be more than 8 characters and less than 90 characters.'
                 }]
             );
         }
@@ -58,15 +66,15 @@
     fireEvtAccountCreated: function(component, helper) {
         var data = component.get('v.acc');
 
-        var appEvent = $A.get("e.c:EvtAccountCreated");
-        appEvent.setParams({
+        var evt = $A.get("e.c:EvtAccountCreated");
+        evt.setParams({
             "account": data,
             "context": "DWCreateAccountform.cmp"
         });
 
-        component.find('utils').log('Firing EvtAccountCreated Event: ' + appEvent);
+        component.find('utils').log('Firing EvtAccountCreated Event: ' + evt);
 
-        appEvent.fire();
+        evt.fire();
     },
     createAccount: function(component, helper) {
         if(helper.isValid(component, helper) && component.isValid()) {
@@ -90,15 +98,17 @@
                 },
                 callBackMethod: function (data) {
                     component.find('utils').log('createAccount.data: ', data);
-                    var data = data.output;
+                    var output = data.output;
 
                     var message = Array();
 
-                    if(data != null){
+                    if($A.util.isUndefined(output.sfaip_fsc_dw__DW_Accounts__r)){
+
+                        var msg = (typeof(data.messages.Errors[0]) != 'undefined')?data.messages.Errors[0]:'';
                         message.push(
                             ["ui:message", {
                                 'severity': 'error',
-                                'body': 'Some error occured while creating DriveWealth Account: ' + data.message
+                                'body': 'Some error occured while creating DriveWealth Account: ' + msg
                             }]
                         );
                     }else{
@@ -109,12 +119,12 @@
                                 'body': 'Account was successfully created'
                             }]
                         );
-                        component.set('v.acc', data);
+                        component.set('v.acc', output);
 
                         $A.util.addClass(component.find('createAccountForm'), 'slds-hide');
 
                         //Fire event to indicate that order has been created
-                      helper.fireEvtAccountCreated(component, helper);
+                        helper.fireEvtAccountCreated(component, helper);
                     }
                     component.find('utils').createComponents(message, component.find('uiMessage'));
 
@@ -124,5 +134,42 @@
             });
         }
         /**/
+    },
+
+    getAccountInfo: function(component, helper) {
+        var apexBridge = component.find("ApexBridge");
+        apexBridge.callApex({
+            component: component,
+            data: {
+                operation: "DWCreateAccount",
+                input: {
+                    AccountID: component.get('v.recordId'),
+                    mode: 'getAccount'
+                }
+            },
+            callBackMethod: function (data) {
+                var acc = data.output;
+                component.set('v.acc', acc);
+
+                //var noAccountMsg = component.find('noAccountMsg');
+
+
+                if ($A.util.isUndefined(acc.sfaip_fsc_dw__DW_Accounts__r)) {
+                  //  $A.util.removeClass(noAccountMsg, 'slds-hide');
+                //    $A.util.addClass(noAccountMsg, 'slds-show');
+
+                   // helper.showCreateAccountForm(component, helper);
+
+                } else {
+                 //   $A.util.addClass(noAccountMsg, 'slds-hide');
+                  //  $A.util.removeClass(noAccountMsg, 'slds-show');
+
+
+
+                    //show create account form
+        //            helper.hideCreateAccountForm(component, helper);
+                }
+            }
+        });
     }
 })
