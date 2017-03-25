@@ -1,4 +1,4 @@
-<aura:component description="DWCreateAccountForm" implements="flexipage:availableForAllPageTypes, force:hasRecordId" >
+<aura:component description="DWCreateAccountForm" implements="flexipage:availableForAllPageTypes,force:hasRecordId" >
 
     <!-- Workaround for strange bug where related records are not loaded the first time -->
     <!-- https://org62.lightning.force.com/one/one.app#/sObject/0D50M000032hJOwSAM/view-->
@@ -56,20 +56,66 @@
 
     <!-- Input Form using components -->
     <aura:if isTrue="{!v.acc.sfaip_fsc_dw__DW_Accounts__r}">
+        <lightning:card >
+            <aura:set attribute="title">
+                DW Account
+            </aura:set>
+        </lightning:card>
         <div  class="slds-box slds-theme--default" aura:id="showAccountForm">
             <div class="slds-form-element slds-is-required">
                 <div class="slds-form-element__control">
                     <label class="slds-form-element__label" >DW Account Name</label>
                     <div class="slds-form-element__control">
                         <ui:outputText value="{!v.acc.sfaip_fsc_dw__DW_Accounts__r.records[0].Name}" />
+
                     </div>
                 </div>
+                <br/>
+
+                <div class="slds-form-element__control">
+                    <label class="slds-form-element__label" >DW Account Number</label>
+                    <div class="slds-form-element__control">
+                        <ui:outputText value="{!v.acc.sfaip_fsc_dw__DW_Accounts__r.records[0].sfaip_fsc_dw__Account_No__c}" />
+
+                    </div>
+                </div>
+                <br/>
+
+                <div class="slds-form-element__control">
+                    <label class="slds-form-element__label" >DW Account Type</label>
+                    <div class="slds-form-element__control">
+
+                        <aura:If isTrue="{!v.acc.sfaip_fsc_dw__DW_Accounts__r.records[0].sfaip_fsc_dw__Account_Type__c==1}">
+                            <ui:outputText value="Practice Account" />
+
+                            </aura:If>
+
+                    </div>
+                </div>
+                <br/>
+
+                <div class="slds-form-element__control">
+                    <label class="slds-form-element__label" >When was this created</label>
+                    <div class="slds-form-element__control">
+                        <ui:outputText value="{!v.acc.sfaip_fsc_dw__DW_Accounts__r.records[0].sfaip_fsc_dw__Created_When__c}" />
+
+                    </div>
+                </div>
+                <br/>
             </div>
 
         </div>
 
 
         <aura:set attribute="else">
+            <lightning:card >
+                <aura:set attribute="title">
+                    Create DW Account
+                </aura:set>
+                <p class="slds-p-horizontal--small">
+                    Create DW Account to start placing orders
+                </p>
+            </lightning:card>
             <div  class="slds-box slds-theme--default" aura:id="createAccountForm">
                 <div class="slds-form-element">
                     <lightning:input required="true" label="First Name" aura:id="fname" name="fname" type="text" value="{!v.fname}" />

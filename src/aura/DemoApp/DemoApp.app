@@ -6,6 +6,7 @@
     <c:DWCreateMarketOrder debug="{!v.debug}" recordId="{!v.recordId}" debugClient="{!v.debugClient}" />
     <c:DWOrderList debug="{!v.debug}" debugClient="{!v.debugClient}" recordId="{!v.recordId}" />
     -->
+    <c:DWCreateMarketOrder debug="{!v.debug}" recordId="{!v.recordId}" debugClient="{!v.debugClient}" />
     <c:DWCreateAccountForm recordId="{!v.recordId}" debug="{!v.debug}" debugClient="{!v.debugClient}"  />
 
 </aura:application>

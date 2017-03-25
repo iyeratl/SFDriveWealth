@@ -29,16 +29,20 @@ public with sharing class DataQuery {
                     Schema.Account.fields.DW_Total_Practice_Accounts__c, Schema.Account.fields.Email__c
             }
         );
-
+        //CRUD/FLS Check
         Util.AccessController.assertAuthorizedToView(
                 Schema.DW_Account__c.getSobjectType(),
                 new List<Schema.SobjectField>{
-                        Schema.DW_Account__c.fields.Name
+                        Schema.DW_Account__c.fields.Name,
+                        Schema.DW_Account__c.fields.Account_No__c,
+                        Schema.DW_Account__c.fields.Account_Type__c,
+                        Schema.DW_Account__c.fields.Created_When__c
+
                 }
         );
 
         Account a;
-        List<Account> listAcc =  [select ID, Name, Email__C,  DW_Username__c, DW_Password__c, DW_User_ID__c, DW_Total_Practice_Accounts__c, (select Id, Name from DW_Accounts__r) from Account WHERE Id=:AccountId];
+        List<Account> listAcc =  [select ID, Name, Email__C,  DW_Username__c, DW_Password__c, DW_User_ID__c, DW_Total_Practice_Accounts__c, (select Id, Name, Account_No__c, Account_Type__c, Created_When__c from DW_Accounts__r) from Account WHERE Id=:AccountId];
         if(listAcc.size() > 0 ){
             a = listAcc[0];
         }

@@ -6,6 +6,11 @@
     handleEvtOrderCreated: function(component, event, helper){
         component.find('utils').log('Handling EvtOrderCreated Event: ' + event);
     },
+    handleEvtAccountCreated: function(component, event, helper) {
+        component.find('utils').log('Handling handleEvtAccountCreated Event: ', event);
+
+        helper.getAccountInfo(component, helper);
+    },
     handleEvtInstrumentInfo: function(component, event, helper) {
         component.find('utils').log('Handling EvtInstrumentInfo Event: ', event);
 

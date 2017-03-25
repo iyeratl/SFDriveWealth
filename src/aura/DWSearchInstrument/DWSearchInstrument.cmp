@@ -29,12 +29,16 @@
 
     <div class="slds">
 
-        <div class="{!v.showHeader == true ? 'slds-page-header slds-show' : 'slds-page-header slds-hide'}">
-            <div class="slds-grid">
-                <div class="slds-col slds-has-flexi-truncate">
-                    <p class="slds-text-heading--label">Search symbol</p>
-                </div>
-            </div>
+        <div class="{!v.showHeader == true ? 'slds-show' : 'slds-hide'}">
+
+            <lightning:card >
+                <aura:set attribute="title">
+                    Search Symbol
+                </aura:set>
+                <p class="slds-p-horizontal--small">
+                    Enter a stock symbol to search
+                </p>
+            </lightning:card>
         </div>
 
         <!-- ui:message will added in this div via createComponents() -->

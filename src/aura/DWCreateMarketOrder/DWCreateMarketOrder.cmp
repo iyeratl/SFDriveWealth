@@ -20,6 +20,9 @@
     <!--<aura:registerEvent name="EvtInstrumentInfo" type="c:EvtInstrumentInfo" />-->
     <aura:handler name="EvtInstrumentInfo" event="c:EvtInstrumentInfo" action="{!c.handleEvtInstrumentInfo}" />
 
+
+    <aura:handler event="c:EvtAccountCreated" action="{!c.handleEvtAccountCreated}" />
+
     <!--
     <aura:handler event="c:EvtOrderCreated" action="{!c.handleEvtOrderCreated}" />
     -->
