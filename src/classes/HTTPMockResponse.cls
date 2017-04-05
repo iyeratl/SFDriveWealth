@@ -36,6 +36,10 @@ global class HTTPMockResponse implements HttpCalloutMock {
             //Using stasrtsWith because we don't know what will be the order ID
             res = getOrderStatus_positive();
         }
+        else if(req.getEndpoint().equals('https://api.drivewealth.io/v1/signups/practice') && req.getMethod() == 'POST') {
+            //Using stasrtsWith because we don't know what will be the order ID
+            res = getCreateOrder_positive();
+        }
 
     return res;
 
@@ -47,7 +51,8 @@ global class HTTPMockResponse implements HttpCalloutMock {
     private static HTTPResponse createSession(){
         HttpResponse res = new HttpResponse();
         res.setHeader('Content-Type', 'application/json');
-        res.setBody('{"appTypeID": 2000,"commissionRate": 2.99,"loginState": 1,"referralCode": "VL7FN4","sessionKey": "02e57c7d-d071-4c63-b491-1194a9939ea5.2016-01-20T20:50:48.680Z","userID": "02e57c7d-d071-4c63-b491-1194a9939ea5","wlpID": "DW"}');
+       // res.setBody('{"appTypeID": 2000,"commissionRate": 2.99,"loginState": 1,"referralCode": "VL7FN4","sessionKey": "02e57c7d-d071-4c63-b491-1194a9939ea5.2016-01-20T20:50:48.680Z","userID": "02e57c7d-d071-4c63-b491-1194a9939ea5","wlpID": "DW"}');
+        res.setBody('{"appTypeID":2000,"commissionRate":2.99,"loginState":1,"referralCode":"VL7FN4","sessionKey":"02e57c7d-d071-4c63-b491-1194a9939ea5.2016-01-20T20:50:48.680Z","userID":"02e57c7d-d071-4c63-b491-1194a9939ea5","wlpID":"DW","accounts":[{"accountID":"02e57c7d-d071-4c63-b491-1194a9939ea5.1452548320228","accountNo":"DPAJ000003","userID":"02e57c7d-d071-4c63-b491-1194a9939ea5","accountType":1,"cash":9950.04,"currencyID":"USD","defaultGoalID":"64924fd9-8ef6-48ac-ade2-c628cbfbd6b9","freeTradeBalance":0,"goodFaithViolations":0,"ibID":"80f9b672-120d-4b73-9cc9-42fb3262c4b9","interestFree":false,"margin":1,"nickname":"Bob\'s Practice Account","openedWhen":"2016-01-11T21:38:40Z","goals":[],"orders":[],"patternDayTrades":0,"positions":[],"status":2,"tradingType":"C","updatedWhen":"2016-01-20T08:17:46.770Z","createdWhen":"2016-01-11T21:38:40.228Z","bodMoneyMarket":9950.04,"bodEquityValue":43.56,"bodCashAvailForWith":9950.04,"bodCashAvailForTrading":9950.04,"rtCashAvailForTrading":9950.04,"rtCashAvailForWith":9950.04,"accountMgmtType":0,"longOnly":true}],"instruments":[],"guest":false}');
         res.setStatusCode(200);
         return res;
     }
@@ -170,6 +175,22 @@ global class HTTPMockResponse implements HttpCalloutMock {
         HttpResponse res = new HttpResponse();
         res.setHeader('Content-Type', 'application/json');
         res.setBody('{ "orderID": "DA.c69f5f51-04ce-4796-a748-67306cdbcb17", "accountID": "02e57c7d-d071-4c63-b491-1194a9939ea5.1452548617456", "userID": "02e57c7d-d071-4c63-b491-1194a9939ea5", "cumQty": 0, "accountNo": "DWTE000005", "commission": 0, "createdByID": "02e57c7d-d071-4c63-b491-1194a9939ea5", "createdWhen": "2016-01-11T22:01:09.066Z", "execType": "8", "grossTradeAmt": 0, "instrumentID": "675cc7c2-e24b-42fa-9d1f-4b3a97ae8d2f", "lastPx": 0, "lastQty": 0, "leavesQty": 0, "orderNo": "DAQB000017", "orderQty": 13, "ordRejReason": "Non-Margin accounts cannot sell short.", "ordStatus": "8", "ordType": "1", "price": 0, "rateAsk": 0, "rateBid": 0, "side": "S", "accountType": 2, "autoStop": 0, "limitPrice": 0, "timeInForce": "0", "isoTimeRestingOrderExpires": "2016-01-12T21:00:00.000Z", "internalMemo": "OGW ACH", "amountCash": 0}');
+        res.setStatusCode(200);
+        return res;
+    }
+
+    /*
+    {
+    "password": "abcd1234", "userID": "02e57c7d-d071-4c63-b491-1194a9939ea5","username": "bob227"
+}
+     */
+
+    private Static HTTPResponse getCreateOrder_positive(){
+        HttpResponse res = new HttpResponse();
+        res.setHeader('Content-Type', 'application/json');
+        res.setBody('{"password": "abcd1234", "userID": "02e57c7d-d071-4c63-b491-1194a9939ea5","username": "bob227"}');
+
+        //res.setBody('{ "password": "DA.c69f5f51-04ce-4796-a748-67306cdbcb17", "accountID": "02e57c7d-d071-4c63-b491-1194a9939ea5.1452548617456", "userID": "02e57c7d-d071-4c63-b491-1194a9939ea5", "cumQty": 0, "accountNo": "DWTE000005", "commission": 0, "createdByID": "02e57c7d-d071-4c63-b491-1194a9939ea5", "createdWhen": "2016-01-11T22:01:09.066Z", "execType": "8", "grossTradeAmt": 0, "instrumentID": "675cc7c2-e24b-42fa-9d1f-4b3a97ae8d2f", "lastPx": 0, "lastQty": 0, "leavesQty": 0, "orderNo": "DAQB000017", "orderQty": 13, "ordRejReason": "Non-Margin accounts cannot sell short.", "ordStatus": "8", "ordType": "1", "price": 0, "rateAsk": 0, "rateBid": 0, "side": "S", "accountType": 2, "autoStop": 0, "limitPrice": 0, "timeInForce": "0", "isoTimeRestingOrderExpires": "2016-01-12T21:00:00.000Z", "internalMemo": "OGW ACH", "amountCash": 0}');
         res.setStatusCode(200);
         return res;
     }

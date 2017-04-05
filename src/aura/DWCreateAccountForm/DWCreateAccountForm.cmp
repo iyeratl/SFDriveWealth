@@ -39,14 +39,7 @@
 
     <ui:spinner aura:id="spinner" isVisible="false"/>
 
-<!--
-    <aura:attribute name="emailAddress1" type="String" default="" />
-    <aura:attribute name="firstName" type="String" default="" />
-    <aura:attribute name="lastName" type="String" default="" />
-    <aura:attribute name="userName" type="String" default="" />
-    <aura:attribute name="password" type="String" default="" />
-    <aura:attribute name="referralCode" type="String" default="" />
-  -->
+
     <aura:attribute name="fname" type="String" default="" />
     <aura:attribute name="lname" type="String" default="" />
     <aura:attribute name="uname" type="String" default="" />
@@ -58,7 +51,7 @@
     <aura:if isTrue="{!v.acc.sfaip_fsc_dw__DW_Accounts__r}">
         <lightning:card >
             <aura:set attribute="title">
-                DW Account
+                Drive Wealth Account Details
             </aura:set>
         </lightning:card>
         <div  class="slds-box slds-theme--default" aura:id="showAccountForm">

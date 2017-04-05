@@ -148,8 +148,7 @@ public with sharing class DWCreateAccount  extends ETLC_ApexBridge_Abstract {
         try{
             retValue = DataQuery.getAccount(AccountId);
             Util.log('DWCreateAccount.retrieveDriveWealthSessionInfo():retValue: ' + retValue);
-        }catch (SFDCAccessControlException e) {
-            String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: ' + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: ' + e.getExceptionField() + ' Text: ' + e.getText();Util.log('DWCreateOrder_Controller.getDWAccountList():SFDCAccessControlException: ' + message);
+        }catch (SFDCAccessControlException e) {String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: ' + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: ' + e.getExceptionField() + ' Text: ' + e.getText();Util.log('DWCreateOrder_Controller.getDWAccountList():SFDCAccessControlException: ' + message);
         }catch(Exception e){ Util.log('DWCreateAccount.getAccount():Exception: ' + e.getMessage()); }
         return retValue;
     }
