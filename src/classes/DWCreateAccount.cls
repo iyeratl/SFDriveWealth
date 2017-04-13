@@ -17,7 +17,7 @@ public with sharing class DWCreateAccount  extends ETLC_ApexBridge_Abstract {
 
         String mode = (String) data.getInputValue('mode');
         if (mode == 'getAccount') {
-            data.output = ETLC_ApexBridge_Data.encodeData(getAccount((Id) data.getInputValue('AccountID')));
+            data.output = ETLC_ApexBridge_Data.encodeData(getAccount(data, (Id) data.getInputValue('AccountID')));
         } else if (mode == 'createAccount') {
             Util.log('DWCreateAccount.process():data: ' + data);
             Util.log(data.getInputValue('acc'));
@@ -142,13 +142,13 @@ public with sharing class DWCreateAccount  extends ETLC_ApexBridge_Abstract {
     }
 
 
-    public Account getAccount(ID AccountId){
+    public Account getAccount(ETLC_ApexBridge_Data data, ID AccountId){
 
         Account retValue;
         try{
             retValue = DataQuery.getAccount(AccountId);
-            Util.log('DWCreateAccount.retrieveDriveWealthSessionInfo():retValue: ' + retValue);
-        }catch (SFDCAccessControlException e) {String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: ' + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: ' + e.getExceptionField() + ' Text: ' + e.getText();Util.log('DWCreateOrder_Controller.getDWAccountList():SFDCAccessControlException: ' + message);
+            Util.log('DWCreateAccount.getAccount():retValue: ' + retValue);
+        }catch (SFDCAccessControlException e) {String message = 'Access Control violation - Type: ' + e.getExceptionType() + ' Reason: ' + e.getExceptionReason() + ' Object: ' + e.getExceptionObject() + ' Field: ' + e.getExceptionField() + ' Text: ' + e.getText();Util.log('DWCreateOrder_Controller.getDWAccountList():SFDCAccessControlException: ' + message);data.addMessage(ETLC_ApexBridge_Data.MessageType.Errors, 'DWCreateAccount.getAccount():Error: ' + message);
         }catch(Exception e){ Util.log('DWCreateAccount.getAccount():Exception: ' + e.getMessage()); }
         return retValue;
     }

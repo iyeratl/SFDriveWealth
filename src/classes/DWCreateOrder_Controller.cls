@@ -51,7 +51,7 @@ public with sharing class DWCreateOrder_Controller  extends ETLC_ApexBridge_Abst
      * @return Account
      */
     public static Account getAccount(ID AccountId) {
-        Account retValue;
+        Account retValue = new Account();
         try{
             retValue = DataQuery.getAccount(AccountId);
             Util.log('DriveWealth.retrieveDriveWealthSessionInfo():retValue: ' + retValue);

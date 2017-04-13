@@ -102,7 +102,7 @@
 
                     var message = Array();
 
-                    if($A.util.isUndefined(output.sfaip_fsc_dw__DW_Accounts__r)){
+                    if(output==null || $A.util.isUndefined(output) || $A.util.isUndefined(output.sfaip_fsc_dw__DW_Accounts__r)){
 
                         var msg = (typeof(data.messages.Errors[0]) != 'undefined')?data.messages.Errors[0]:'';
                         message.push(
@@ -149,26 +149,25 @@
             },
             callBackMethod: function (data) {
                 var acc = data.output;
+                component.find('utils').log('DWCreateAccountForm:getAccountInfo().data: ', data);
                 component.set('v.acc', acc);
 
-                //var noAccountMsg = component.find('noAccountMsg');
 
+                var message = Array();
 
-                if ($A.util.isUndefined(acc.sfaip_fsc_dw__DW_Accounts__r)) {
-                  //  $A.util.removeClass(noAccountMsg, 'slds-hide');
-                //    $A.util.addClass(noAccountMsg, 'slds-show');
+                var msg = (typeof(data.messages.Errors) != 'undefined')?data.messages.Errors[0]:'';
+                if(msg != '') {
 
-                   // helper.showCreateAccountForm(component, helper);
+                    message.push(
+                        ["ui:message", {
+                            'severity': 'error',
+                            'body': msg
+                        }]
+                    );
 
-                } else {
-                 //   $A.util.addClass(noAccountMsg, 'slds-hide');
-                  //  $A.util.removeClass(noAccountMsg, 'slds-show');
-
-
-
-                    //show create account form
-        //            helper.hideCreateAccountForm(component, helper);
+                    component.find('utils').createComponents(message, component.find('uiMessage'));
                 }
+
             }
         });
     }

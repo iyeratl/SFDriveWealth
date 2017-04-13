@@ -14,24 +14,29 @@
                 component.find('utils').log('DWOrderStatus.data: ', data);
                 //component.set('v.orders', JSON.parse(data.output));
 
-                var orders = [], key;
-                for ( key in data.output ) {
-                    data.output[key].sfaip_fsc_dw__Executed_When__c = helper.dateFromSpecialString(data.output[key].sfaip_fsc_dw__Executed_When__c);
-                    orders.push({value:data.output[key], key:key});
-                }
-                component.set('v.orders', orders);
 
-                if(data.output.length <=0 ){
+
+                if($A.util.isUndefined(data.output) || $A.util.isUndefined(data.output.records) ||  data.output.records.length <=0 ){
                     var message = Array();
                     message.push(
                         ["ui:message", {
-                            'severity': 'error',
-                            'body': 'Some error occured while searching for orders'
+                            'severity': 'information',
+                            'body': 'There are no previous orders'
                         }]
                     );
 
+                    component.set('v.orders', []);
+
                     component.find('utils').createComponents(message, component.find('uiMessage'));
                 }else{
+
+                    var orders = [], key;
+                    for ( key in data.output ) {
+                        data.output[key].sfaip_fsc_dw__Executed_When__c = helper.dateFromSpecialString(data.output[key].sfaip_fsc_dw__Executed_When__c);
+                        orders.push({value:data.output[key], key:key});
+                    }
+                    component.set('v.orders', orders);
+
                     component.find('utils').destroyComponents(component.find('uiMessage'));
                 }
             }

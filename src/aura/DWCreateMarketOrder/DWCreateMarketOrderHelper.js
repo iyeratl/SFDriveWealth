@@ -12,9 +12,11 @@
             },
             callBackMethod: function (data) {
                 var acc = data.output;
+                component.find('utils').log('getAccountInfo:acc:', acc) ;
+
 
                 var noAccountMsg = component.find('noAccountMsg');
-                if($A.util.isUndefined(acc.sfaip_fsc_dw__DW_Accounts__r)){
+                if($A.util.isUndefined(acc) || $A.util.isUndefined(acc.sfaip_fsc_dw__DW_Accounts__r)){
                     $A.util.removeClass(noAccountMsg, 'slds-hide');
                     $A.util.addClass(noAccountMsg, 'slds-show');
                 }else{
