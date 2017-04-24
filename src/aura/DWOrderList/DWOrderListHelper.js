@@ -16,7 +16,7 @@
 
 
 
-                if($A.util.isUndefined(data.output) || $A.util.isUndefined(data.output.records) ||  data.output.records.length <=0 ){
+                if($A.util.isUndefined(data.output)){
                     var message = Array();
                     message.push(
                         ["ui:message", {
@@ -35,6 +35,8 @@
                         data.output[key].sfaip_fsc_dw__Executed_When__c = helper.dateFromSpecialString(data.output[key].sfaip_fsc_dw__Executed_When__c);
                         orders.push({value:data.output[key], key:key});
                     }
+                    component.find('utils').log('DWOrderStatus.orders: ', orders);
+
                     component.set('v.orders', orders);
 
                     component.find('utils').destroyComponents(component.find('uiMessage'));

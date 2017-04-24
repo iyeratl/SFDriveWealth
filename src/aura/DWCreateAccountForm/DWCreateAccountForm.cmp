@@ -133,7 +133,7 @@
                     <div class="slds-form-element__control">
                         <label class="slds-form-element__label" >Email</label>
                         <div class="slds-form-element__control">
-                            <ui:outputText value="{!v.acc.Email__c}" />
+                            <ui:outputText value="{!v.acc.sfaip_fsc_dw__Email__c}" />
                         </div>
                     </div>
                 </div>

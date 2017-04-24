@@ -104,7 +104,7 @@
 
                     if(output==null || $A.util.isUndefined(output) || $A.util.isUndefined(output.sfaip_fsc_dw__DW_Accounts__r)){
 
-                        var msg = (typeof(data.messages.Errors[0]) != 'undefined')?data.messages.Errors[0]:'';
+                        var msg = (typeof(data.messages.Errors) != 'undefined' && typeof(data.messages.Errors[0]) != 'undefined')?data.messages.Errors[0]:'';
                         message.push(
                             ["ui:message", {
                                 'severity': 'error',
@@ -155,7 +155,7 @@
 
                 var message = Array();
 
-                var msg = (typeof(data.messages.Errors) != 'undefined')?data.messages.Errors[0]:'';
+                var msg = (typeof(data.messages.Errors) != 'undefined' && typeof(data.messages.Errors[0]) != 'undefined')?data.messages.Errors[0]:'';
                 if(msg != '') {
 
                     message.push(
