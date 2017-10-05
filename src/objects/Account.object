@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>DW_Password__c</fullName>
+        <description>DriveWealth Password</description>
+        <externalId>false</externalId>
+        <inlineHelpText>DriveWealth Password</inlineHelpText>
+        <label>DW Password</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>DW_Total_Practice_Accounts__c</fullName>
+        <externalId>false</externalId>
+        <label>DW Total Practice Accounts</label>
+        <summaryForeignKey>DW_Account__c.Account__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>DW_User_ID__c</fullName>
+        <description>DriveWealth User ID</description>
+        <externalId>true</externalId>
+        <inlineHelpText>DriveWealth User ID</inlineHelpText>
+        <label>DW User ID</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>DW_Username__c</fullName>
+        <description>DriveWealth Username</description>
+        <externalId>false</externalId>
+        <inlineHelpText>DriveWealth Username</inlineHelpText>
+        <label>DW Username</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Email__c</fullName>
+        <externalId>false</externalId>
+        <label>Email</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Email</type>
+        <unique>false</unique>
+    </fields>
+</CustomObject>

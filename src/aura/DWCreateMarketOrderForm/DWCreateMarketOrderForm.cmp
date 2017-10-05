@@ -45,7 +45,7 @@
     <!-- ui:message will added in this div via createComponents() -->
     <div aura:id="uiMessage"></div>
 
-    <ui:spinner aura:id="spinner" isVisible="false"/>
+    <ui:spinner aura:id="spinner" isVisible="false"/>            
 
     <!-- Input Form using components -->
     <div  class="slds-box slds-theme--default" aura:id="createOrderForm">

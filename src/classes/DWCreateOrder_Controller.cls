@@ -26,6 +26,7 @@ public with sharing class DWCreateOrder_Controller  extends ETLC_ApexBridge_Abst
         if (data.debug){
             Util.debug = data.debug;
         }
+        Util.debug =  true;
 
         // Depending on the mode, determine which operation to perform
         String mode = (String) data.getInputValue('mode');

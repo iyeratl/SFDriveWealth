@@ -15,8 +15,8 @@
                 //component.set('v.orders', JSON.parse(data.output));
 
 
-
-                if($A.util.isUndefined(data.output)){
+                if($A.util.isUndefined(data.output) || data.output.length <=0){
+                    
                     var message = Array();
                     message.push(
                         ["ui:message", {

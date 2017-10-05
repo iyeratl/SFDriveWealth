@@ -5,24 +5,87 @@
         <name>ApexClass</name>
     </types>
     <types>
-        <members>*</members>
-        <name>ApexComponent</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>ApexPage</name>
-    </types>
-    <types>
-        <members>*</members>
+        <members>DWAccount</members>
         <name>ApexTrigger</name>
     </types>
     <types>
-        <members>*</members>
+        <members>DWCreateAccountForm</members>
+        <members>DWCreateMarketOrder</members>
+        <members>DWCreateMarketOrderForm</members>
+        <members>DWOrderList</members>
+        <members>DWSearchInstrument</members>
+        <members>DWSearchInstrumentRow</members>
+        <members>DemoApp</members>
+        <members>ETLC_ApexBridge</members>
+        <members>EvtAccountCreated</members>
+        <members>EvtInstrumentInfo</members>
+        <members>EvtOrderCreated</members>
+        <members>Utils</members>
+        <members>uiModal</members>
+        <members>uiModalShowEvent</members>
         <name>AuraDefinitionBundle</name>
     </types>
     <types>
-        <members>*</members>
-        <name>StaticResource</name>
+        <members>FSC_DriveWealth</members>
+        <members>FSC_DriveWealth_Lightning</members>
+        <name>CustomApplication</name>
     </types>
-    <version>37.0</version>
+    <types>
+        <members>Account.DW_Password__c</members>
+        <members>Account.DW_Total_Practice_Accounts__c</members>
+        <members>Account.DW_User_ID__c</members>
+        <members>Account.DW_Username__c</members>
+        <members>Account.Email__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>DW_Account__c</members>
+        <members>DW_Order__c</members>
+        <members>DW_Session__c</members>
+        <members>DriveWealthP__c</members>
+        <members>DriveWealth__c</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>DW_Account__c</members>
+        <members>DW_Order__c</members>
+        <members>DW_Session__c</members>
+        <name>CustomTab</name>
+    </types>
+    <types>
+        <members>DW_Account__c-DW Account Layout</members>
+        <members>DW_Order__c-DW Order Layout</members>
+        <members>DW_Session__c-DW Session Layout</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>DW_Account__c.All</members>
+        <members>DW_Order__c.All</members>
+        <members>DW_Session__c.All</members>
+        <name>ListView</name>
+    </types>
+    <types>
+        <members>FSC_DW</members>
+        <name>PermissionSet</name>
+    </types>
+    <types>
+        <members>DriveWealthAPI</members>
+        <members>RequestBin</members>
+        <name>RemoteSiteSetting</name>
+    </types>
+    <types>
+        <members>DW_Session__c</members>
+        <members>DriveWealthP__c</members>
+        <members>DriveWealth__c</members>
+        <name>SharingRules</name>
+    </types>
+    <types>
+        <members>DW_Account__c</members>
+        <members>DW_Order__c</members>
+        <members>DW_Session__c</members>
+        <members>DriveWealthP__c</members>
+        <members>DriveWealth__c</members>
+        <name>Workflow</name>
+    </types>
+    <version>38.0</version>
 </Package>
