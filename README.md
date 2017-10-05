@@ -1,6 +1,8 @@
 # SFDriveWealth
 DriveWealth Integration with FSC
 
+We have converted this repo to work with SFDX as of Oct 5, 2017. SFDX Version of this code (and more features) is at [https://github.com/jrattanpal/SFDriveWealth_SFDX](https://github.com/jrattanpal/SFDriveWealth_SFDX)
+
 <a href="https://githubsfdeploy.herokuapp.com?owner=iyeratl&repo=SFDriveWealth" target="_blank">
     <img alt="Deploy to Salesforce" src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
 </a>
